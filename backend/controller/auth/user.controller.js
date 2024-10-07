@@ -1,4 +1,4 @@
-import { User } from "../../models/user.model";
+import { User } from "../../models/user.model.js";
 import bcrypt from 'bcrypt';
 import { z } from 'zod';
 import jwt from 'jsonwebtoken';
@@ -11,13 +11,12 @@ const userSignUpSchema = z.object({
             message: "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character."
         }),
 });
-
 export const userSignUp = async (req, res) => {
+    // console.log(req.body);
     try {
         // Validate the request body with Zod
         const { name, email, password } = userSignUpSchema.parse(req.body);
         const file = req.file;
-
         // Check if the user already exists
         const existingUser = await User.findOne({ email });
         if (existingUser) {
@@ -45,6 +44,7 @@ export const userSignUp = async (req, res) => {
     } catch (error) {
         if (error instanceof z.ZodError) {
             // If validation error from Zod, send the validation error messages
+            console.error(error.errors)
             return res.status(400).json({
                 message: "Validation failed.",
                 errors: error.errors,  // Zod will give you an array of validation issues
@@ -60,7 +60,8 @@ export const userSignUp = async (req, res) => {
 };
 
 export const userLogin = async (req, res) => {
-    const { email, password } = req.body;
+    console.log(req.body);
+    const { email, password } = req.body
     try {
         // Find the user by email
         const user = await User.findOne({ email });
@@ -77,22 +78,53 @@ export const userLogin = async (req, res) => {
         // Successful sign-in 
 
         // Generate jwt token 
-        const userToken = {userId: user._id};
-        const token = jwt.sign(userToken,process.env.SECRET_KEY);
-    
+        const userToken = { userId: user._id };
+        const token = jwt.sign(userToken, process.env.SECRET_KEY);
+
         // Set Cookie
-        res.cookie("token",token,{
-            maxAge: 24*60*60*1000,
+        res.cookie("token", token, {
+            maxAge: 24 * 60 * 60 * 1000,
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'None',
-            httpOnly: true
+            // httpOnly: true
         })
         return res.status(200).json({ message: "Sign-in successful.", user: { email: user.email } });
     } catch (error) {
-        if (error instanceof z.ZodError) {
-            return res.status(400).json({ message: "Validation failed.", errors: error.errors });
-        }
-
         return res.status(500).json({ message: "Internal server error." });
     }
 };
+export const userLogout = (req, res) => {
+    // Clear the token cookie
+    res.clearCookie('token', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',  // Ensure it's secure in production
+        sameSite: 'None',
+    });
+
+    return res.status(200).json({ message: "Logout successful, token cleared." });
+};
+
+export const getUsers = async (req, res) => {
+    const filter = req.query.search ? {
+        $or: [
+            { name: { $regex: req.query.search, $options: 'i' } },
+            { email: { $regex: req.query.search, $options: 'i' } }
+        ]
+    } : {};
+
+    try {
+        // const users = (await User.find(filter))
+        // .find({_id: {$ne: req.userId}});
+        const users = await User.find({ ...filter, _id: { $ne: req.userId } }); // Moved _id filter inside find
+
+        res.status(200).json({
+            users
+        })
+    } catch (error) {
+        console.log("Error..");
+        res.status(500).json({
+            error
+        })
+    }
+}
+

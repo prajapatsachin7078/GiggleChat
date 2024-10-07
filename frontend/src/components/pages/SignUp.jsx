@@ -4,20 +4,86 @@ import { Label } from '../ui/label'
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
 import { Link } from 'react-router-dom'
+import axios from 'axios'
+import { toast } from '@/hooks/use-toast'
 
 function SignUp() {
     const [input, setInput] = useState({
-        name:'',
-        email:'',
-        password:''
+        name: '',
+        email: '',
+        password: '',
+        avatar: ''
     });
-    const handleSubmit = (e) => {
-        e.preventDefault(); // prevent the default behaviour of the form
-        console.log(input)
-    }
-    const handleInputChange = (e) => {  
-        const {name,value} = e.target;
-        
+    const handleSubmit = async (e) => {
+        e.preventDefault(); // Prevent the default behaviour of the form
+        const data = {
+            name: input.name.tirm(),
+            email: input.email.trim(),
+            password: input.password.trim()
+        }
+
+        try {
+            const response = await axios.post(
+                "http://localhost:3000/api/v1/user/signup",
+                data,
+                {
+                    withCredentials: true, // For cookies, etc.
+                }
+            );
+
+            console.log("Response: ", response);
+
+            // Handle different response statuses here
+            if (response.status === 201) {
+                // Handle success
+                toast({
+                    variant: "success",
+                    description: response.data.message
+                });
+            } else if (response.status === 400) {
+                // Handle validation error
+                toast({
+                    variant: "destructive",
+                    title: "Uh oh! Something went wrong.",
+                    description: response.data.message,
+                    action: <ToastAction altText="Try again">Try again</ToastAction>,
+                });
+            } else {
+                // Handle other statuses if necessary
+                toast({
+                    variant: "destructive",
+                    title: "Uh oh! Something went wrong.",
+                    description: response.data.message,
+                    action: <ToastAction altText="Try again">Try again</ToastAction>,
+                });
+            }
+
+        } catch (error) {
+            // Catch block for network errors or if Axios throws an error
+            console.error("Error during sign-up: ", error);
+
+            // Check if it's an Axios error and if it has a response
+            if (error.response) {
+                // Handle specific error response status codes here if needed
+                toast({
+                    variant: "destructive",
+                    title: "Uh oh! Something went wrong.",
+                    description: error.response.data.message || "An error occurred.",
+                });
+            } else {
+                // Handle network errors (e.g., server down, no internet)
+                toast({
+                    variant: "destructive",
+                    title: "Network Error",
+                    description: "Please check your internet connection.",
+                });
+            }
+        }
+    };
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+
         setInput((prevInput) => ({
             ...prevInput,     // Spread the previous input state
             [name]: value   // Update only the changed field (name, email, or password)

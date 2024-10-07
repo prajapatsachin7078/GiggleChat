@@ -1,13 +1,14 @@
 import mongoose from "mongoose";
-import logger from "../logger/winston.logger.js";
-
+import logger from "../utils/logger.js";
+import dotenv from 'dotenv';
+dotenv.config();
 /** @type {typeof mongoose | undefined} */
 export let dbInstance = undefined;
 
 const connectDB = async () => {
     try {
         const connectionInstance = await mongoose.connect(
-            `${process.env.MONGODB_URI}}`
+            process.env.MONGO_URI
         );
         dbInstance = connectionInstance;
         logger.info(

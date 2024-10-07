@@ -4,6 +4,10 @@ import { Label } from '../ui/label'
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
 import { Link } from 'react-router-dom'
+import axios from 'axios'
+import Cookies from 'js-cookie';
+import { toast } from '@/hooks/use-toast'
+import { ToastAction } from '@radix-ui/react-toast'
 
 function Login() {
     const [input, setInput] = useState({
@@ -11,8 +15,37 @@ function Login() {
         password: ''
     });
     const handleSubmit = (e) => {
-        e.preventDefault(); // prevent the default behaviour of the form
-        console.log(input)
+        e.preventDefault(); // prevent the default behaviour of the form    
+        const data = {
+            email: input.email,
+            password: input.password
+        }
+
+        axios.post('http://localhost:3000/api/v1/user/login',
+            data,
+            {
+                withCredentials: true
+            }
+        ).then(response=>{
+            // Handle success
+            const c = Cookies.get('token');
+            console.log(c);
+            toast({
+                variant: "success",
+                description: response.data.message
+            });
+        }).catch(error=>{
+            console.log("Axios Error: ",)
+            if (error.response) {
+                toast({
+                    variant: "destructive",
+                    description:error.response.data.message,
+                    action: <ToastAction altText="Try again">Try again</ToastAction>
+                })
+            }
+        })
+        
+        // console.log(input)
     }
     const handleInputChange = (e) => {
         const { name, value } = e.target;

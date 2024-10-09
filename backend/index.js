@@ -3,6 +3,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import userRouter from './routes/user.route.js';
+import chatRouter from './routes/chat.route.js';
 import connectDB from './db/index.js';
 
 dotenv.config();
@@ -24,6 +25,7 @@ app.get('/',(req,res)=>{
 })
 
 app.use("/api/v1/user",userRouter);
+app.use('/api/v1/chat',chatRouter);
 
 
 app.listen(process.env.PORT,()=>{

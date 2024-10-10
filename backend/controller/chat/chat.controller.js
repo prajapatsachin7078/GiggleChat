@@ -58,7 +58,7 @@ export const fetchChats = async (req, res) => {
             select: 'name email avatar'
         });
 
-        return res.status(200).json(populatedChats);
+        return res.status(200).json({populatedChats, currentUserId: req.userId});
     } catch (error) {
         console.error("Fetch Chats: ", error);
         return res.status(500).json({ message: "Internal server error." });

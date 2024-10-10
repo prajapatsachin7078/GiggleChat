@@ -4,7 +4,7 @@ export const validateUser = (req, res, next) => {
     try {
         // Get the token from cookies
         const token = req.cookies.token;
-
+        // console.log(req.cookies)
         if (!token) {
             return res.status(401).json({ message: 'Authentication token is missing.' });
         }

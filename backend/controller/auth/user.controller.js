@@ -60,7 +60,6 @@ export const userSignUp = async (req, res) => {
 };
 
 export const userLogin = async (req, res) => {
-    console.log(req.body);
     const { email, password } = req.body
     try {
         // Find the user by email
@@ -80,15 +79,17 @@ export const userLogin = async (req, res) => {
         // Generate jwt token 
         const userToken = { userId: user._id };
         const token = jwt.sign(userToken, process.env.SECRET_KEY);
-
         // Set Cookie
-        res.cookie("token", token, {
-            maxAge: 24 * 60 * 60 * 1000,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'None',
-            // httpOnly: true
-        })
-        return res.status(200).json({ message: "Sign-in successful.", user: { email: user.email } });
+        res.cookie('token', token, {
+            httpOnly: true,
+            expires: new Date(Date.now() + 3600000) // 1 hour expiration
+        });
+
+        return res.status(200).json({ message: "Sign-in successful.", user: { 
+            email: user.email,
+            avatar: user.avatar,
+            name: user.name
+        } });
     } catch (error) {
         return res.status(500).json({ message: "Internal server error." });
     }

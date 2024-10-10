@@ -3,9 +3,8 @@ import { Card, CardContent, CardFooter, CardHeader } from '../ui/card'
 import { Label } from '../ui/label'
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
-import Cookies from 'js-cookie';
 import { toast } from '@/hooks/use-toast'
 import { ToastAction } from '@radix-ui/react-toast'
 
@@ -14,8 +13,14 @@ function Login() {
         email: '',
         password: ''
     });
+    const [loading, setLoading] = useState(false); // New loading state
+    const navigate = useNavigate();
+
     const handleSubmit = (e) => {
         e.preventDefault(); // prevent the default behaviour of the form    
+
+        setLoading(true);  // Set loading to true when submission starts
+
         const data = {
             email: input.email,
             password: input.password
@@ -26,27 +31,33 @@ function Login() {
             {
                 withCredentials: true
             }
-        ).then(response=>{
+        ).then(response => {
             // Handle success
-            const c = Cookies.get('token');
-            console.log(c);
             toast({
                 variant: "success",
                 description: response.data.message
             });
-        }).catch(error=>{
-            console.log("Axios Error: ",)
+            const user = response.data.user;
+
+            // Store user info in local storage
+            localStorage.setItem('userInfo', JSON.stringify(user));
+
+            // Redirect to chats
+            navigate("/chats");
+        }).catch(error => {
+            console.log("Axios Error: ", error);
             if (error.response) {
                 toast({
                     variant: "destructive",
-                    description:error.response.data.message,
+                    description: error.response.data.message,
                     action: <ToastAction altText="Try again">Try again</ToastAction>
-                })
+                });
             }
-        })
-        
-        // console.log(input)
-    }
+        }).finally(() => {
+            setLoading(false);  // Set loading to false when request is finished
+        });
+    };
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
 
@@ -54,7 +65,8 @@ function Login() {
             ...prevInput,     // Spread the previous input state
             [name]: value   // Update only the changed field (name, email, or password)
         }));
-    }
+    };
+
     return (
         <div className='flex justify-center align-middle items-center h-[100vh]'>
             <Card>
@@ -78,8 +90,9 @@ function Login() {
                         type='submit'
                         className='w-full'
                         onClick={handleSubmit}
+                        disabled={loading}  // Disable button when loading
                     >
-                        Submit
+                        {loading ? 'Logging in...' : 'Submit'}  {/* Change button text */}
                     </Button>
 
                     <div>

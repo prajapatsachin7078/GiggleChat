@@ -3,7 +3,7 @@ import { Card, CardContent, CardFooter, CardHeader } from '../ui/card'
 import { Label } from '../ui/label'
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { toast } from '@/hooks/use-toast'
 
@@ -14,10 +14,11 @@ function SignUp() {
         password: '',
         avatar: ''
     });
+    const navigate = useNavigate();
     const handleSubmit = async (e) => {
         e.preventDefault(); // Prevent the default behaviour of the form
         const data = {
-            name: input.name.tirm(),
+            name: input.name.trim(),
             email: input.email.trim(),
             password: input.password.trim()
         }
@@ -40,6 +41,7 @@ function SignUp() {
                     variant: "success",
                     description: response.data.message
                 });
+                navigate('/login');
             } else if (response.status === 400) {
                 // Handle validation error
                 toast({

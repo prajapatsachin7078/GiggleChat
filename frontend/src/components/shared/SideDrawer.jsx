@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 import { SearchIcon } from "lucide-react";
@@ -13,21 +13,23 @@ import {
     DrawerTrigger,
 } from "../ui/drawer";
 import axios from 'axios'; // Import Axios
-import {Skeleton} from '../ui/skeleton'; // Import your Skeleton component
+import { Skeleton } from '../ui/skeleton'; // Import your Skeleton component
 import UserSearchList from "./UserSearchList";
+import UserContext from "@/context/userContext";
 
-
-export function SideDrawer() {
-    const [search, setSearch] = useState("s");
+function SideDrawer() {
+    const [search, setSearch] = useState("");
     const [searchResult, setSearchResult] = useState([]);
     const [loading, setLoading] = useState(false);
-    async function fetchData(){
+    const [isDrawerOpen, setIsDrawerOpen] = useState(false); // Manage drawer state
+    const { setSelectedChat } = useContext(UserContext);
+
+    // Fetch users based on search input
+    async function fetchData() {
         try {
             const response = await axios.get(`http://localhost:3000/api/v1/user/get-users?search=${search}`, {
                 withCredentials: true // Ensure credentials are sent
             });
-
-            console.log(response.data.users)
             setSearchResult(response?.data?.users); // Assume the response has user data
         } catch (error) {
             console.error("Error fetching users:", error);
@@ -35,21 +37,43 @@ export function SideDrawer() {
             setLoading(false);
         }
     }
+
     const handleSearch = async () => {
         setLoading(true);
         fetchData();
     };
-    useEffect(()=>{
-        fetchData();
-    },[search]);
-    
+
+    const chatStartHandler = async(userId) => {
+        try {
+            const response = await axios.post('http://localhost:3000/api/v1/chat',{
+                userId
+            },{
+                withCredentials: true
+            });
+            console.log(response.data);
+            setSelectedChat(response?.data);
+        } catch (error) {
+            console.log("Error while creating new chat..");
+        }
+        // Close the drawer after initiating the chat
+        setIsDrawerOpen(false);
+    };
+
+    useEffect(() => {
+        if (search) fetchData();
+    }, [search]);
+
     return (
-        <Drawer>
+        <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}> {/* Controlled open state */}
             <TooltipProvider>
                 <Tooltip>
                     <TooltipTrigger asChild>
                         <DrawerTrigger asChild>
-                            <Button variant="outline" className="flex items-center space-x-2" onClick={handleSearch}>
+                            <Button
+                                variant="outline"
+                                className="flex items-center space-x-2"
+                                onClick={() => setIsDrawerOpen(true)} // Open drawer
+                            >
                                 <span className="flex items-center">
                                     <SearchIcon className="h-4 w-4" />
                                 </span>
@@ -98,7 +122,7 @@ export function SideDrawer() {
                             </div>
                         ) : (
                             <div>
-                               <UserSearchList searchResult={searchResult}/>
+                                <UserSearchList searchResult={searchResult} chatStartHandler={chatStartHandler} />
                                 {searchResult.length === 0 && !loading && (
                                     <p>No users found.</p>
                                 )}
@@ -107,7 +131,12 @@ export function SideDrawer() {
                     </div>
                     <DrawerFooter>
                         <DrawerClose asChild>
-                            <Button variant="outline">Cancel</Button>
+                            <Button variant="outline"
+                                className="hover:bg-red-600 hover:text-white"
+                                onClick={() => setIsDrawerOpen(false)} // Close drawer
+                            >
+                                Cancel
+                            </Button>
                         </DrawerClose>
                     </DrawerFooter>
                 </div>
@@ -115,3 +144,5 @@ export function SideDrawer() {
         </Drawer>
     );
 }
+
+export default SideDrawer;

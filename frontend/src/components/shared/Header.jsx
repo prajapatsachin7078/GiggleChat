@@ -1,11 +1,11 @@
                                        
 import React, { useContext, useState } from 'react'
-import { SideDrawer } from './SideDrawer'
+import SideDrawer  from './SideDrawer'
 import { Avatar } from '../ui/avatar'
 import { AvatarFallback, AvatarImage } from '@radix-ui/react-avatar'
 import { BellIcon } from '@radix-ui/react-icons'
 import { Separator } from '../ui/separator'
-import { UserContext } from '@/context/userContext'
+import UserContext from '@/context/userContext'
 import ProfileModal from './ProfileModal'
 import { Button } from '../ui/button'
 import { useNavigate } from 'react-router-dom'

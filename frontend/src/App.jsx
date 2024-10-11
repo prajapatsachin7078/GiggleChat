@@ -7,7 +7,6 @@ import Login from './components/pages/Login'
 import ChatBox from './components/pages/ChatBox'
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
     <Routes>

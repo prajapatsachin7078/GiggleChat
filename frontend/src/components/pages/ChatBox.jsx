@@ -6,14 +6,14 @@ import Header from '../shared/Header';
 
 function ChatBox() {
     return (
-        <div className='container p-2 text-black'>
+        <div className='p-2 text-black border-2'>
             <Header />
             <ResizablePanelGroup direction="horizontal">
-                <ResizablePanel>
+                <ResizablePanel className='h-[90vh] overflow-y-auto min-w-[20%]'>
                     <MyChats />
                 </ResizablePanel>
                 <ResizableHandle  />
-                <ResizablePanel>
+                <ResizablePanel className='h-[90vh] overflow-y-auto'>
                     <CurrentChat />
                 </ResizablePanel>
             </ResizablePanelGroup>

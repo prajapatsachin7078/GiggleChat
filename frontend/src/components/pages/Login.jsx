@@ -1,12 +1,12 @@
-import React, { useState } from 'react'
-import { Card, CardContent, CardFooter, CardHeader } from '../ui/card'
-import { Label } from '../ui/label'
-import { Input } from '../ui/input'
-import { Button } from '../ui/button'
-import { Link, useNavigate } from 'react-router-dom'
-import axios from 'axios'
-import { toast } from '@/hooks/use-toast'
-import { ToastAction } from '@radix-ui/react-toast'
+import React, { useState } from 'react';
+import { Card, CardContent, CardFooter, CardHeader } from '../ui/card';
+import { Label } from '../ui/label';
+import { Input } from '../ui/input';
+import { Button } from '../ui/button';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { toast } from '@/hooks/use-toast';
+import { ToastAction } from '@radix-ui/react-toast';
 
 function Login() {
     const [input, setInput] = useState({
@@ -24,7 +24,7 @@ function Login() {
         const data = {
             email: input.email,
             password: input.password
-        }
+        };
 
         axios.post('http://localhost:3000/api/v1/user/login',
             data,
@@ -75,14 +75,23 @@ function Login() {
                 </CardHeader>
                 <CardContent>
                     <Label htmlFor='email'>Email</Label>
-                    <Input type='email' id='email' name='email' placeholder='xyz@gmail.com'
+                    <Input
+                        type='email'
+                        id='email'
+                        name='email'
+                        placeholder='xyz@gmail.com'
                         value={input.email}
                         onChange={handleInputChange}
+                        autoComplete="email"  // Autocomplete attribute for email
                     />
                     <Label htmlFor='password'>Password</Label>
-                    <Input type='password' id='password' name='password'
+                    <Input
+                        type='password'
+                        id='password'
+                        name='password'
                         value={input.password}
                         onChange={handleInputChange}
+                        autoComplete="current-password"  // Autocomplete attribute for password
                     />
                 </CardContent>
                 <CardFooter className='flex flex-col space-y-3'>
@@ -101,7 +110,7 @@ function Login() {
                 </CardFooter>
             </Card>
         </div>
-    )
+    );
 }
 
-export default Login
+export default Login;

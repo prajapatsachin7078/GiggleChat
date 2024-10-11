@@ -3,7 +3,7 @@ import { User } from "../../models/user.model.js";
 
 export const accessChat = async (req, res) => {
     const { userId } = req.body; // getting the receiver id from the sender who wants to initiate the chat
-    
+    const currentUserId = req.userId;
     if(!userId){
         return res.status(400).json({
             message: "Chat can't be created. Please give participant!"
@@ -14,7 +14,7 @@ export const accessChat = async (req, res) => {
         const existingChat = await Chat.find({
             isGroupChat: false,
             $and: [
-                { participants: { $elemMatch: { $eq: req.userId } } },
+                { participants: { $elemMatch: { $eq: currentUserId } } },
                 { participants: { $elemMatch: { $eq: userId } } }
             ]
         })
@@ -32,11 +32,12 @@ export const accessChat = async (req, res) => {
             const chatData = {
                 name: 'sender',
                 isGroupChat: false,
-                participants: [req.userId, userId]
+                participants: [currentUserId, userId]
             };
             const chat = await Chat.create(chatData);
             const fullChat = await Chat.findOne({ _id: chat._id })
-                .populate('participants', '-password');
+                .populate('participants', '-password')
+                .populate('lastMessage');
             return res.status(201).json(fullChat);
         }
     } catch (error) {

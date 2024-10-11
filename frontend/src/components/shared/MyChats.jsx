@@ -2,6 +2,9 @@ import { useContext, useEffect, useState } from "react";
 import axios from 'axios'; 
 import { Skeleton } from '../ui/skeleton'; 
 import UserContext from "@/context/userContext";
+import { PlusIcon } from "lucide-react";
+import { Button } from "../ui/button";
+import { CreateNewGroup } from "./CreateNewGroup";
 
 function MyChats() {
   const [currentUserId, setcurrentUserId] = useState();
@@ -45,7 +48,12 @@ function MyChats() {
 
   return (
     <div className="mx-auto w-full  p-4 ">
-      <h1 className="text-2xl font-bold mb-4">My Chats</h1>
+      <div className="flex justify-between">
+        <h1 className="text-2xl font-bold mb-4">My Chats</h1>
+        <CreateNewGroup>
+          <Button>New Group <PlusIcon /> </Button>
+        </CreateNewGroup>
+      </div>
       <div className="mb-4">
         <input
           type="text"

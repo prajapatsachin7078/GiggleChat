@@ -50,7 +50,7 @@ function SideDrawer() {
             },{
                 withCredentials: true
             });
-            console.log(response.data);
+            // console.log(response.data);
             setSelectedChat(response?.data);
         } catch (error) {
             console.log("Error while creating new chat..");

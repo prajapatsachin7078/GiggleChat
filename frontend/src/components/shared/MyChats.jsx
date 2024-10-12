@@ -76,9 +76,10 @@ function MyChats() {
             ) : (
               <ul>
                 {filteredChats.map(chat => (
-                  <li key={chat._id} className="border p-4 mb-2 rounded-lg bg-white shadow hover:shadow-lg transition-shadow duration-200 cursor-pointer"
-                    onClick={()=>{}}
+                  <li key={chat._id} className={`border p-4 mb-2 rounded-lg bg-white shadow hover:shadow-lg hover:bg-green-300 transition-shadow duration-200 cursor-pointer ${selectedChat?._id === chat._id ? 'bg-green-300' : ''}`}
+                    onClick={() => { setSelectedChat(chat) }}
                   >
+
                     <div className="flex items-center space-x-4">
                       {/* Check if it's a group chat or an individual chat */}
                       {chat.isGroupChat ? (

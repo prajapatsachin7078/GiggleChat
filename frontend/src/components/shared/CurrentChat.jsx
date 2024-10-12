@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import UserContext from '@/context/userContext';
+import React, { useContext, useState } from 'react';
 
 // Dummy Data
 const dummyCurrentChat = {
@@ -35,6 +36,7 @@ const dummyMessages = [
 function CurrentChat() {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState(dummyMessages);
+  const { chats, selectedChat, setChats, setSelectedChat } = useContext(UserContext);
 
   const handleSendMessage = () => {
     if (message.trim()) {

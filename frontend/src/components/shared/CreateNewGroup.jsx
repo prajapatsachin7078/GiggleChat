@@ -10,10 +10,12 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import axios from "axios";
-import { useState } from "react"
+import { useContext, useState } from "react"
 import { Skeleton } from "../ui/skeleton";
 import { Badge } from "../ui/badge";
 import { Cross1Icon } from "@radix-ui/react-icons";
+import { toast } from "@/hooks/use-toast";
+import UserContext from "@/context/userContext";
 
 export function CreateNewGroup({ children }) {
     const [participants, setParticipants] = useState([]);
@@ -22,6 +24,7 @@ export function CreateNewGroup({ children }) {
     const [isLoading, setIsLoading] = useState(false);
     const [name, setName] = useState('');
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const { chats, selectedChat, setChats, setSelectedChat } = useContext   (UserContext);
     const handleSearch = async (e) => {
         setIsLoading(true);
         setSearch(e.target.value);
@@ -30,7 +33,6 @@ export function CreateNewGroup({ children }) {
             const response = await axios.get(`http://localhost:3000/api/v1/user/get-users?search=${search}`, {
                 withCredentials: true
             })
-            console.log(response.data);
             setSearchResult(response.data.users);
         } catch (error) {
             console.log(error);
@@ -38,12 +40,49 @@ export function CreateNewGroup({ children }) {
             setIsLoading(false);
         }
     }
+    const handleCreateGroup = async (e) => {
+        // prevent default behaviour
+        e.preventDefault();
+        // check if participant array is empty 
+        if (participants.length == 0) {
+            toast({
+                variant: "destructive",
+                description: "Add atleast one participant!",
+
+            });
+        } else if (!name) {
+            toast({
+                variant: "destructive",
+                description: "Please provide a group name!",
+
+            });
+        }
+        else {
+            try {
+                // Extracting array with participants id
+                const users = participants.map(participant => participant.id);
+                const response = await axios.post("http://localhost:3000/api/v1/chat/group", {
+                    participants: users,
+                    name
+                }, {
+                    withCredentials: true
+                });
+                setChats([...chats,response.data]);
+                setSelectedChat(response.data);
+            } catch (error) {
+                console.log("Error in creating group: ", error);
+            }finally{
+                setIsDialogOpen(!isDialogOpen);
+            }
+        }
+
+    }
     const handleAddParticipant = (id, userName) => {
         const participant = {
             name: userName,
             id
         }
-        if (!participants.includes(participant)) {
+        if (!participants.some(user => user.id == participant.id)) {
             setParticipants([...participants, participant]);
         }
     }
@@ -82,8 +121,8 @@ export function CreateNewGroup({ children }) {
                     {/* Users list */}
                     <div className={`${participants.length > 0 ? 'border my-2 px-1 py-2' : ''}`}>
                         {
-                            participants.map(participant => (
-                                <Badge className={'p-2 m-1 text-sm hover:bg-black'}>
+                            participants.map((participant, index) => (
+                                <Badge key={index} className={'p-2 m-1 text-sm hover:bg-black'}>
                                     {participant.name}
                                     <Cross1Icon
                                         className="ml-2 hover:cursor-pointer"
@@ -129,7 +168,9 @@ export function CreateNewGroup({ children }) {
                     </div>
                 </div>
                 <DialogFooter>
-                    <Button type="submit">Create</Button>
+                    <Button type="submit"
+                        onClick={handleCreateGroup}
+                    >Create</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

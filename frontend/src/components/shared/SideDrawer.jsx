@@ -54,9 +54,10 @@ function SideDrawer() {
             setSelectedChat(response?.data);
         } catch (error) {
             console.log("Error while creating new chat..");
+        }finally{
+            // Close the drawer after initiating the chat
+            setIsDrawerOpen(false);
         }
-        // Close the drawer after initiating the chat
-        setIsDrawerOpen(false);
     };
 
     useEffect(() => {

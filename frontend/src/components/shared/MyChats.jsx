@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
-import axios from 'axios'; 
-import { Skeleton } from '../ui/skeleton'; 
+import axios from 'axios';
+import { Skeleton } from '../ui/skeleton';
 import UserContext from "@/context/userContext";
 import { PlusIcon } from "lucide-react";
 import { Button } from "../ui/button";
@@ -8,7 +8,6 @@ import { CreateNewGroup } from "./CreateNewGroup";
 
 function MyChats() {
   const [currentUserId, setcurrentUserId] = useState();
-  
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [filteredChats, setFilteredChats] = useState([]);
@@ -36,9 +35,14 @@ function MyChats() {
     // Filter chats based on search input
     if (search) {
       const results = chats.filter(chat => {
-        return chat.participants.some(participant =>
-          participant.name.toLowerCase().includes(search.toLowerCase())
-        );
+        // Check if it's a group chat or individual chat
+        if (chat.isGroupChat) {
+          return chat.name.toLowerCase().includes(search.toLowerCase());
+        } else {
+          return chat.participants.some(participant =>
+            participant.name.toLowerCase().includes(search.toLowerCase())
+          );
+        }
       });
       setFilteredChats(results);
     } else {
@@ -46,8 +50,9 @@ function MyChats() {
     }
   }, [search, chats]);
 
+
   return (
-    <div className="mx-auto w-full  p-4 ">
+    <div className="mx-auto w-full p-4 ">
       <div className="flex justify-between">
         <h1 className="text-2xl font-bold mb-4">My Chats</h1>
         <CreateNewGroup>
@@ -70,18 +75,22 @@ function MyChats() {
             <Skeleton className="h-12 w-full rounded" />
           </div>
         ) : (
-          <div className="overflow-y-auto">
+          <div className="overflow-y-auto h-[90vh]">
             {filteredChats.length === 0 ? (
               <p className="text-gray-500">No chats found.</p>
             ) : (
               <ul>
                 {filteredChats.map(chat => (
-                  <li key={chat._id} className={`border p-4 mb-2 rounded-lg bg-white shadow hover:shadow-lg hover:bg-green-300 transition-shadow duration-200 cursor-pointer ${selectedChat?._id === chat._id ? 'bg-green-300' : ''}`}
-                    onClick={() => { setSelectedChat(chat) }}
+                  <li
+                    key={chat._id}
+                    onClick={() => {
+                      setSelectedChat(chat); // Set the selected chat
+                    }}
+                    className={`border mb-2 hover:bg-green-300 rounded-lg bg-white shadow hover:shadow-lg transition-shadow duration-200 cursor-pointer `}
                   >
-
-                    <div className="flex items-center space-x-4">
-                      {/* Check if it's a group chat or an individual chat */}
+                    <div className={`flex p-2 items-center space-x-4 ${selectedChat?._id === chat?._id ? 'bg-green-300' : ''}`}
+                    >
+                      
                       {chat.isGroupChat ? (
                         <img src={chat.avatar} alt={chat.name} className="h-10 w-10 rounded-full" />
                       ) : (
@@ -89,7 +98,7 @@ function MyChats() {
                           <img key={participant._id} src={participant.avatar.url} alt={participant.name} className="h-10 w-10 rounded-full" />
                         ))
                       )}
-                      <div className="flex flex-col"> 
+                      <div className="flex flex-col">
                         {chat.isGroupChat ? (
                           <div className="font-semibold text-lg">{chat.name}</div>
                         ) : (

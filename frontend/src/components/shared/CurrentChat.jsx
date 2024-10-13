@@ -2,6 +2,7 @@ import UserContext from '@/context/userContext';
 import { DotsVerticalIcon, EyeOpenIcon, ViewVerticalIcon } from '@radix-ui/react-icons';
 import React, { useContext, useState } from 'react';
 import { UpdateGroupModal } from './UpdateGroupModal';
+import { SelectedUserProfileModal } from './SelectedUserProfileModal';
 
 // Dummy Data
 const dummyCurrentChat = {
@@ -79,9 +80,11 @@ function CurrentChat() {
                 className='text-black w-6 h-6 font-bold'
               />
             </UpdateGroupModal>
-          ) : (<>
-
-          </>)
+          ) : (<SelectedUserProfileModal >
+            <EyeOpenIcon
+              className='text-black w-6 h-6 font-bold'
+            />
+          </SelectedUserProfileModal>)
         }
       </div>
 

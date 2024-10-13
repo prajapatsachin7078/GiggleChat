@@ -24,7 +24,10 @@ export function UpdateGroupModal({ children }) {
     const [isLoading, setIsLoading] = useState(false);
     const [name, setName] = useState('');
     const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const { selectedChat, setSelectedChat, setChats } = useContext(UserContext);
+    const { user, selectedChat, setSelectedChat, setChats } = useContext(UserContext);
+
+    // Check if the current user is the admin of the group
+    const isAdmin = selectedChat?.admin?._id === user.userId;
 
     useEffect(() => {
         if (selectedChat?.isGroupChat) {
@@ -97,6 +100,19 @@ export function UpdateGroupModal({ children }) {
         }
     };
 
+    const handleLeaveGroup = async () => {
+        try {
+            const response = await axios.put(`http://localhost:3000/api/v1/chat/leave/${selectedChat._id}`, {}, {
+                withCredentials: true
+            });
+            setChats(prevChats => prevChats.filter(chat => chat._id !== selectedChat._id));
+            setSelectedChat(null);
+            toast({ description: "You left the group." });
+        } catch (error) {
+            console.log("Error leaving group:", error);
+        }
+    };
+
     return (
         <Dialog open={isDialogOpen} onOpenChange={() => setIsDialogOpen(!isDialogOpen)}>
             <DialogTrigger asChild>
@@ -104,63 +120,79 @@ export function UpdateGroupModal({ children }) {
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>Update Group</DialogTitle>
+                    <DialogTitle>{isAdmin?"Update Group":selectedChat.name}</DialogTitle>
                     <DialogDescription>
-                        Update the group's details or manage participants.
+                        {isAdmin
+                            ? "Update the group's details or manage participants."
+                            : "View participants or leave the group if you no longer want to participate."}
                     </DialogDescription>
                 </DialogHeader>
                 <div className="py-4">
-                    <div className="items-center gap-4 mb-2">
-                        <Input id="name"
-                            value={name}
-                            placeholder="Group Name"
-                            onChange={(e) => setName(e.target.value)}
-                            className="col-span-3"
-                        />
-                        <Button onClick={handleRenameGroup}>Rename Group</Button>
-                    </div>
-                    <div className="items-center">
-                        <Input id="search"
-                            placeholder="Add users, e.g. Piyush, Sachin.."
-                            onChange={handleSearch}
-                            value={search}
-                            className="col-span-3 mb-2"
-                        />
-                    </div>
+                    {isAdmin && (
+                        <>
+                            <div className="items-center gap-4 mb-2 flex">
+                                <Input id="name"
+                                    value={name}
+                                    placeholder="Group Name"
+                                    onChange={(e) => setName(e.target.value)}
+                                    className="col-span-3  float-end"
+                                />
+                                <Button onClick={handleRenameGroup}>Rename</Button>
+                            </div>
+                            <div className="items-center">
+                                <Input id="search"
+                                    placeholder="Add users, e.g. Piyush, Sachin.."
+                                    onChange={handleSearch}
+                                    value={search}
+                                    className="col-span-3 mb-2"
+                                />
+                            </div>
+                        </>
+                    )}
+
                     {/* Participants list */}
                     <div className={`${participants.length > 0 ? 'border my-2 px-1 py-2' : ''}`}>
                         {participants.map((participant, index) => (
                             <Badge key={index} className={'p-2 m-1 text-sm hover:bg-black'}>
                                 {participant.name}
-                                <Cross1Icon
-                                    className="ml-2 hover:cursor-pointer"
-                                    onClick={() => handleRemoveParticipant(participant._id)}
-                                />
+                                {isAdmin && participant._id !== user._id && (
+                                    <Cross1Icon
+                                        className="ml-2 hover:cursor-pointer"
+                                        onClick={() => handleRemoveParticipant(participant._id)}
+                                    />
+                                )}
                             </Badge>
                         ))}
                     </div>
+
                     {/* Search Results */}
-                    <div>
-                        {isLoading ? (
-                            <div className="flex flex-col space-y-4">
-                                <Skeleton className="h-12 w-12 rounded-full" />
-                                <Skeleton className="h-4 w-[250px]" />
-                            </div>
-                        ) : (
-                            searchResults.length > 0 && searchResults.slice(0, 4).map((user) => (
-                                <div key={user._id} className="flex items-center hover:cursor-pointer hover:bg-red-400 justify-between rounded-md px-1 hover:text-white space-x-4 py-2 border-b"
-                                    onClick={() => handleAddParticipant(user._id, user.name)}
-                                >
-                                    <div className='flex'>
-                                        <img src={user.avatar.url || '/fallback-avatar.png'} alt={user.name} className="h-12 w-12 rounded-full" />
-                                        <div className='ml-2'>
-                                            <div className="font-semibold">{user.name}</div>
-                                            <div className="text-gray-700">{user.email}</div>
+                    {isAdmin && (
+                        <div>
+                            {isLoading ? (
+                                <div className="flex flex-col space-y-4">
+                                    <Skeleton className="h-12 w-12 rounded-full" />
+                                    <Skeleton className="h-4 w-[250px]" />
+                                </div>
+                            ) : (
+                                searchResults.length > 0 && searchResults.slice(0, 4).map((user) => (
+                                    <div key={user._id} className="flex items-center hover:cursor-pointer hover:bg-red-400 justify-between rounded-md px-1 hover:text-white space-x-4 py-2 border-b"
+                                        onClick={() => handleAddParticipant(user._id, user.name)}
+                                    >
+                                        <div className='flex'>
+                                            <img src={user.avatar.url || '/fallback-avatar.png'} alt={user.name} className="h-12 w-12 rounded-full" />
+                                            <div className='ml-2'>
+                                                <div className="font-semibold">{user.name}</div>
+                                                <div className="text-gray-700">{user.email}</div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            ))
-                        )}
+                                ))
+                            )}
+                        </div>
+                    )}
+
+                    <div className="flex justify-center mt-4">
+                        <Button variant="destructive" onClick={handleLeaveGroup}>Leave Group</Button>
                     </div>
                 </div>
                 <DialogFooter>

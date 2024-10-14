@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useContext, useEffect } from 'react'
 import MyChats from '../shared/MyChats';
 import CurrentChat from '../shared/CurrentChat';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '../ui/resizable';
 import Header from '../shared/Header';
+import UserContext from '@/context/userContext';
 
 function ChatBox() {
     return (
@@ -12,9 +13,9 @@ function ChatBox() {
                 <ResizablePanel className='h-[90vh] overflow-y-auto min-w-[20%]'>
                     <MyChats />
                 </ResizablePanel>
-                <ResizableHandle  />
+                <ResizableHandle />
                 <ResizablePanel className='h-[90vh] overflow-y-auto'>
-                    <CurrentChat />
+                    <CurrentChat/>
                 </ResizablePanel>
             </ResizablePanelGroup>
         </div>

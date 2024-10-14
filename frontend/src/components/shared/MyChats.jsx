@@ -17,9 +17,10 @@ function MyChats() {
   const fetchChats = async () => {
     try {
       const response = await axios.get('http://localhost:3000/api/v1/chat', { withCredentials: true });
-      setChats(response.data.populatedChats); // Assume the response has chat data
-      setFilteredChats(response.data.populatedChats); // Initialize filtered chats with all chats
-      setcurrentUserId(response.data.currentUserId);
+      const { populatedChats, currentUserId } = response.data
+      setChats(populatedChats);
+      setFilteredChats(populatedChats); 
+      setcurrentUserId(currentUserId);
     } catch (error) {
       console.error("Error fetching chats:", error);
     } finally {
@@ -106,7 +107,7 @@ function MyChats() {
                             <div key={participant._id} className="font-semibold text-lg">{participant.name}</div>
                           ))
                         )}
-                        <p className="text-gray-600">{chat.lastMessage?.content || "No messages yet."}</p>
+                        <p className="text-gray-600">{chat?.lastMessage?.content || "No messages yet."}</p>
                       </div>
                     </div>
                   </li>

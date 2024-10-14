@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Card, CardContent, CardFooter, CardHeader } from '../ui/card';
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';
@@ -7,12 +7,15 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from '@/hooks/use-toast';
 import { ToastAction } from '@radix-ui/react-toast';
+import UserContext from '@/context/userContext';
 
 function Login() {
     const [input, setInput] = useState({
         email: '',
         password: ''
     });
+
+    const {user,setUser} = useContext(UserContext);
     const [loading, setLoading] = useState(false); // New loading state
     const navigate = useNavigate();
 
@@ -41,7 +44,7 @@ function Login() {
 
             // Store user info in local storage
             localStorage.setItem('userInfo', JSON.stringify(user));
-
+            setUser(user);
             // Redirect to chats
             navigate("/chats");
         }).catch(error => {
@@ -60,7 +63,6 @@ function Login() {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-
         setInput((prevInput) => ({
             ...prevInput,     // Spread the previous input state
             [name]: value   // Update only the changed field (name, email, or password)

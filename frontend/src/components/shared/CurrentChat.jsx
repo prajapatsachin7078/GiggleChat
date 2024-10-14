@@ -5,6 +5,7 @@ import { SelectedUserProfileModal } from './SelectedUserProfileModal';
 import axios from 'axios';
 import { EyeOpenIcon } from '@radix-ui/react-icons';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@radix-ui/react-tooltip';
 
 
 function CurrentChat() {
@@ -86,18 +87,29 @@ function CurrentChat() {
             {messages.length ? (
               messages.map((msg, index) => (
 
-                  
-                  <div
-                    key={index}
-                    className={`p-2 rounded-lg ${msg.sender._id !== user.userId ? 'self-start flex gap-1 items-center' : 'self-end'}`}
-                  >
-                    {msg.sender._id !== user.userId ? <Avatar>
-                      <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-                      <AvatarFallback>CN</AvatarFallback>
-                    </Avatar> : ""}
+
+                <div
+                  key={index}
+                  className={`p-2 rounded-lg ${msg.sender._id !== user.userId ? 'self-start flex gap-1 items-center' : 'self-end'}`}
+                >
+                  {msg.sender._id !== user.userId ?
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Avatar>
+                            <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                            <AvatarFallback>CN</AvatarFallback>
+                          </Avatar>
+                        </TooltipTrigger>
+                        <TooltipContent className='bg-slate-400 rounded-md px-2 py-1'>
+                          {msg.sender.name}
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                    : ""}
                   <p className={`px-2 py-1 rounded-md ${msg.sender._id !== user.userId ? 'bg-green-300' : 'bg-gray-300'}`}>{msg.content}</p>
-                  </div>
-        
+                </div>
+
               ))
             ) : (
               <div className="text-center">

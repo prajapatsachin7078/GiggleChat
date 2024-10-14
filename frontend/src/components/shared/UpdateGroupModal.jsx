@@ -25,11 +25,12 @@ export function UpdateGroupModal({ children }) {
     const [name, setName] = useState('');
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const { user, selectedChat, setSelectedChat, setChats } = useContext(UserContext);
-
-    // Check if the current user is the admin of the group
-    const isAdmin = selectedChat?.admin?._id === user.userId;
+    const [isAdmin, setIsAdmin] = useState(false);
 
     useEffect(() => {
+        // Check if the current user is the admin of the group
+        setIsAdmin(selectedChat?.admin?._id === user?.userId);
+
         if (selectedChat?.isGroupChat) {
             setName(selectedChat.name); // Pre-fill the group name
             setParticipants(selectedChat.participants); // Pre-fill the group participants
@@ -113,6 +114,20 @@ export function UpdateGroupModal({ children }) {
         }
     };
 
+    // New handler for deleting the group
+    const handleDeleteGroup = async () => {
+        try {
+            await axios.delete(`http://localhost:3000/api/v1/chat/delete/${selectedChat._id}`, {
+                withCredentials: true
+            });
+            setChats(prevChats => prevChats.filter(chat => chat._id !== selectedChat._id));
+            setSelectedChat(null);
+            toast({ description: "Group deleted successfully." });
+        } catch (error) {
+            console.log("Error deleting group:", error);
+        }
+    };
+
     return (
         <Dialog open={isDialogOpen} onOpenChange={() => setIsDialogOpen(!isDialogOpen)}>
             <DialogTrigger asChild>
@@ -120,7 +135,7 @@ export function UpdateGroupModal({ children }) {
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>{isAdmin?"Update Group":selectedChat.name}</DialogTitle>
+                    <DialogTitle>{isAdmin ? "Update Group" : selectedChat.name}</DialogTitle>
                     <DialogDescription>
                         {isAdmin
                             ? "Update the group's details or manage participants."
@@ -135,7 +150,7 @@ export function UpdateGroupModal({ children }) {
                                     value={name}
                                     placeholder="Group Name"
                                     onChange={(e) => setName(e.target.value)}
-                                    className="col-span-3  float-end"
+                                    className="col-span-3 float-end"
                                 />
                                 <Button onClick={handleRenameGroup}>Rename</Button>
                             </div>
@@ -194,6 +209,13 @@ export function UpdateGroupModal({ children }) {
                     <div className="flex justify-center mt-4">
                         <Button variant="destructive" onClick={handleLeaveGroup}>Leave Group</Button>
                     </div>
+
+                    {/* Button to delete the group */}
+                    {isAdmin && (
+                        <div className="flex justify-center mt-4">
+                            <Button variant="destructive" onClick={handleDeleteGroup}>Delete Group</Button>
+                        </div>
+                    )}
                 </div>
                 <DialogFooter>
                     <Button onClick={() => setIsDialogOpen(false)}>Close</Button>

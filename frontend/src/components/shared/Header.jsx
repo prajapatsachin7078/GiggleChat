@@ -9,6 +9,9 @@ import UserContext from '@/context/userContext'
 import ProfileModal from './ProfileModal'
 import { Button } from '../ui/button'
 import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
+import { toast } from '@/hooks/use-toast'
+import { Skeleton } from '../ui/skeleton'
 
 function Header() {
     const { user } = useContext(UserContext);
@@ -18,6 +21,25 @@ function Header() {
         setIsDropdownOpen(!isDropdownOpen);
     };
 
+    const handleLogOut = async() => {
+        try {
+            const response = await axios.get('http://localhost:3000/api/v1/user/logout',{
+                withCredentials: true
+            });
+            console.log(response.data);
+            toast({
+                description: response.data.message
+            })
+            localStorage.removeItem('userInfo');
+            navigate('/');
+        } catch (error) {
+            console.log("Try againt!")
+            toast({
+                description:"Try Again! Internal Server error."
+            })
+        }
+        
+    }
    
     return (
         <nav className='border-b flex justify-between items-center px-4 py-2 bg-white shadow-sm'>
@@ -50,10 +72,7 @@ function Header() {
                                     <Button
                                         variant="ghost"
                                         className="text-left w-full"
-                                        onClick={() => {
-                                            localStorage.removeItem('userInfo');
-                                            navigate('/');
-                                        }}
+                                        onClick={handleLogOut}
                                     >
                                         Log Out
                                     </Button>
@@ -63,7 +82,7 @@ function Header() {
 
                     </div>
                 ) : (
-                    <span>Loading...</span>
+                    <Skeleton className="h-12 w-12 rounded-full" />
                 )}
             </div>
         </nav>

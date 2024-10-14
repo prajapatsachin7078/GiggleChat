@@ -1,17 +1,19 @@
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import UserContext from '@/context/userContext';
-import React, { useContext, useEffect, useState } from 'react';
-import { UpdateGroupModal } from './UpdateGroupModal';
-import { SelectedUserProfileModal } from './SelectedUserProfileModal';
-import axios from 'axios';
-import { EyeOpenIcon } from '@radix-ui/react-icons';
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@radix-ui/react-tooltip';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import { io } from 'socket.io-client';
+import axios from 'axios';
 
+var socket;
+const ENDPOINT = 'http://localhost:3000';
 
 function CurrentChat() {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
-  const { chats, selectedChat, setChats, setSelectedChat, user } = useContext(UserContext);
+  const [socketConnected, setSocketConnected] = useState(false);
+  const { selectedChat, user } = useContext(UserContext);
+  const messageContainerRef = useRef(null);  // Reference to the message container
 
   async function fetchCurrentChat() {
     try {
@@ -19,16 +21,56 @@ function CurrentChat() {
         withCredentials: true
       });
       setMessages(response.data);
+      socket.emit('join chat', selectedChat._id);
     } catch (error) {
       console.error("Error fetching messages: ", error);
     }
   }
 
   useEffect(() => {
+    socket = io(ENDPOINT, {
+      withCredentials: true,
+      transports: ['websocket']
+    });
+
+    socket.emit('setup', user);
+    socket.on('connection', () => setSocketConnected(true));
+    socket.on('connect', () => {
+      console.log('Connected to server');
+    });
+  }, [user]);
+
+  useEffect(() => {
+    if (socket) {
+      const handleNewMessage = (newMessageRecieved) => {
+        if (!selectedChat || selectedChat._id !== newMessageRecieved?.chat?._id) {
+          // Notification logic can go here if needed
+        } else {
+          setMessages((messages) => [...messages, newMessageRecieved]);
+        }
+      };
+
+      socket.on('message recieved', handleNewMessage);
+
+      // Clean up socket listener on component unmount
+      return () => {
+        socket.off('message recieved', handleNewMessage);
+      };
+    }
+  }, [socket, selectedChat]);
+
+  useEffect(() => {
     if (selectedChat && selectedChat._id) {
       fetchCurrentChat();
     }
   }, [selectedChat]);
+
+  // Scroll to bottom when messages array changes
+  useEffect(() => {
+    if (messageContainerRef.current) {
+      messageContainerRef.current.scrollTop = messageContainerRef.current.scrollHeight;
+    }
+  }, [messages]);  // Trigger when `messages` state changes
 
   const handleSendMessage = async () => {
     if (message.trim()) {
@@ -40,54 +82,25 @@ function CurrentChat() {
         const response = await axios.post('http://localhost:3000/api/v1/message', newMessage, {
           withCredentials: true
         });
-        setMessages([...messages, response.data]); // Append the new message from response
+
+        socket.emit('new message', response.data);
+        setMessages((prevMsg) => [...prevMsg, response.data]);
+
       } catch (error) {
         console.error("Error sending message: ", error);
       }
-      setMessage(''); // Clear the input after sending
+      setMessage('');
     }
   };
 
   return (
     selectedChat ? (
-      <div className="flex flex-col h-full  lg:flex-grow border-l">
-        {/* Profile Section */}
-        <div className="flex justify-between items-center p-4 border-b bg-white">
-          <div className="flex items-center space-x-2">
-            {!selectedChat.isGroupChat ? (
-              selectedChat.participants
-                .filter(participant => participant._id !== user.userId) // Exclude current user
-                .map(participant => (
-                  <div key={participant._id} className="flex items-center">
-                    <img src={participant.avatarUrl} alt={participant.name} className="h-10 w-10 rounded-full" />
-                    <span className="ml-2 font-semibold">{participant.name}</span>
-                  </div>
-                ))
-            ) : (
-              <div className="font-semibold text-lg">{selectedChat.name}</div>
-            )}
-          </div>
-          {/* Profile Options (Settings, Logout, etc.) */}
-          {
-            selectedChat.isGroupChat ? (
-              <UpdateGroupModal>
-                <EyeOpenIcon className="text-black w-6 h-6 font-bold hover:cursor-pointer" />
-              </UpdateGroupModal>
-            ) : (
-              <SelectedUserProfileModal>
-                <EyeOpenIcon className="text-black w-6 h-6 font-bold hover:cursor-pointer" />
-              </SelectedUserProfileModal>
-            )
-          }
-        </div>
-
+      <div className="flex flex-col h-full lg:flex-grow border-l">
         {/* Messages Section */}
-        <div className="flex-1 overflow-y-auto p-4 bg-gray-100">
+        <div ref={messageContainerRef} className="flex-1 overflow-y-auto p-4 bg-gray-100">
           <div className="flex flex-col space-y-2">
             {messages.length ? (
               messages.map((msg, index) => (
-
-
                 <div
                   key={index}
                   className={`p-2 rounded-lg ${msg.sender._id !== user.userId ? 'self-start flex gap-1 items-center' : 'self-end'}`}
@@ -109,7 +122,6 @@ function CurrentChat() {
                     : ""}
                   <p className={`px-2 py-1 rounded-md ${msg.sender._id !== user.userId ? 'bg-green-300' : 'bg-gray-300'}`}>{msg.content}</p>
                 </div>
-
               ))
             ) : (
               <div className="text-center">
@@ -119,7 +131,7 @@ function CurrentChat() {
           </div>
         </div>
 
-        {/* Input Field for Sending Messages */}
+        {/* Input Field */}
         <div className="p-4 border-t bg-white">
           <div className="flex">
             <input

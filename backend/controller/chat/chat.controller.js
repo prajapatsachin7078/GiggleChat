@@ -130,7 +130,7 @@ export const removeGroup = async (req, res) => {
         const group = await Chat.findByIdAndDelete(groupId);
 
         return group
-            ? res.status(200).json({ message: "Group Deleted!", group })
+            ? res.status(200).json({ message: "Group Deleted!" })
             : res.status(404).json({ message: "Group not found!" });
     } catch (error) {
         console.error("Error while deleting: ", error);

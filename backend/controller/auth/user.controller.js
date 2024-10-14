@@ -97,11 +97,7 @@ export const userLogin = async (req, res) => {
 };
 export const userLogout = (req, res) => {
     // Clear the token cookie
-    res.clearCookie('token', {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',  // Ensure it's secure in production
-        sameSite: 'None',
-    });
+    res.clearCookie('token');
 
     return res.status(200).json({ message: "Logout successful, token cleared." });
 };
@@ -113,7 +109,6 @@ export const getUsers = async (req, res) => {
             { email: { $regex: req.query.search, $options: 'i' } }
         ]
     } : {};
-
     try {
         // const users = (await User.find(filter))
         // .find({_id: {$ne: req.userId}});

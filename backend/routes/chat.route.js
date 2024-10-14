@@ -10,7 +10,7 @@ router.route("/").get(validateUser,fetchChats);
 
 // Group routes
 router.route("/group").post(validateUser,createGroup);
-router.route("/delete/:groupId").put(validateUser, removeGroup);
+router.route("/delete/:groupId").delete(validateUser, removeGroup);
 router.route("/leave/:groupId").put(validateUser,leaveGroup);
 router.route("/rename/:groupId/:newName").put(validateUser, renameGroup);
 router.route("/remove/:groupId/:memberId").put(validateUser,removeFromGroup);

@@ -4,16 +4,13 @@ export const validateUser = (req, res, next) => {
     try {
         // Get the token from cookies
         const token = req.cookies.token;
-        // console.log(req.cookies)
+        // console.log(token);
         if (!token) {
             return res.status(401).json({ message: 'Authentication token is missing.' });
         }
 
-        // Verify the token and extract the payload (e.g., userId)
-        const decoded = jwt.verify(token, process.env.SECRET_KEY);
-        // console.log(decoded)
-        // Optionally, you can add the user ID to the request object for further use
-        req.userId = decoded.userId;
+          const decoded = jwt.verify(token, process.env.SECRET_KEY);
+                req.userId = decoded.userId;
 
         // Proceed to the next middleware or route handler
         next();

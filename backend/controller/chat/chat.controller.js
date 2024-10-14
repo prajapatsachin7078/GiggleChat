@@ -49,22 +49,23 @@ export const accessChat = async (req, res) => {
 export const fetchChats = async (req, res) => {
     try {
         const allChats = await Chat.find({ participants: { $elemMatch: { $eq: req.userId } } })
+            .populate({
+                path: 'lastMessage',
+                populate: {
+                    path: 'sender',
+                    select: 'name email avatar'
+                }
+            })
             .populate('participants', '-password')
             .populate('admin', '-password')
-            .populate('lastMessage')
             .sort({ updatedAt: -1 });
 
-        const populatedChats = await Chat.populate(allChats, {
-            path: 'lastMessage.sender',
-            select: 'name email avatar'
-        });
-
-        return res.status(200).json({populatedChats, currentUserId: req.userId});
+        return res.status(200).json({ populatedChats: allChats, currentUserId: req.userId });
     } catch (error) {
         console.error("Fetch Chats: ", error);
         return res.status(500).json({ message: "Internal server error." });
     }
-}
+};
 
 export const createGroup = async (req, res) => {
     const userId = req.userId;

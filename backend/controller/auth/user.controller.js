@@ -82,13 +82,14 @@ export const userLogin = async (req, res) => {
         // Set Cookie
         res.cookie('token', token, {
             httpOnly: true,
-            expires: new Date(Date.now() + 3600000) // 1 hour expiration
+            expires: new Date(Date.now() + 3600000 * 24) // 1 hour expiration
         });
 
         return res.status(200).json({ message: "Sign-in successful.", user: { 
             email: user.email,
             avatar: user.avatar,
-            name: user.name
+            name: user.name,
+            userId: user._id
         } });
     } catch (error) {
         return res.status(500).json({ message: "Internal server error." });

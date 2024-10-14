@@ -102,21 +102,20 @@ export const createGroup = async (req, res) => {
 }
 
 export const renameGroup = async (req, res) => {
-    const { newName, groupId } = req.body; // Assuming newName comes from the body
+    const { newName, groupId } = req.params
     try {
         const group = await Chat.findByIdAndUpdate(
             groupId,
             { name: newName },
             { new: true }
         );
-
+        
         // Fetch the updated group
         const chatGroup = await Chat.findById(groupId)
             .populate('participants', '-password')
             .populate('admin', '-password');
-
         return chatGroup
-            ? res.status(200).json({ chatGroup })
+            ? res.status(200).json( chatGroup )
             : res.status(400).json({ message: "Group couldn't be renamed. Try again!" });
     } catch (error) {
         console.error("Error while renaming: ", error);
@@ -163,12 +162,55 @@ export const removeFromGroup = async (req, res) => {
     }
 }
 
+export const leaveGroup = async (req, res) => {
+    const { groupId } = req.params;
+    const { userId } = req;
+
+    try {
+        // Fetch the group by ID
+        const group = await Chat.findById(groupId);
+
+        if (!group) {
+            return res.status(404).json({ message: "Group not found" });
+        }
+
+        // Check if the user is a participant of the group
+        if (!group.participants.includes(userId)) {
+            return res.status(403).json({ message: "You are not a participant in this group" });
+        }
+
+        // If the user is the admin, transfer admin rights to another participant
+        if (group.admin.toString() === userId) {
+            if (group.participants.length > 1) {
+                // Assign admin to the next participant 
+                const newAdmin = group.participants.find(participant => participant.toString() !== userId);
+                group.admin = newAdmin;
+            } else {
+                // If there's only one participant (the admin)
+                return res.status(400).json({ message: "Admin cannot leave as the only participant" });
+            }
+        }
+
+        // Remove the user from the group participants list
+        group.participants = group.participants.filter(participant => participant.toString() !== userId);
+
+        // Save the updated group
+        await group.save();
+
+        return res.status(200).json({ message: "You have left the group successfully", group });
+    } catch (error) {
+        console.error("Error leaving group:", error);
+        return res.status(500).json({ message: "An error occurred", error });
+    }
+};
+
+
 export const addToGroup = async (req, res) => {
     const { groupId, memberId } = req.params;
 
     try {
         const group = await Chat.findByIdAndUpdate(groupId,
-            { $addToSet: { participants: memberId } }, // Use $addToSet to prevent duplicates
+            { $addToSet: { participants: memberId } },
             { new: true }
         );
         const chatGroup = await Chat.findById(groupId)
@@ -177,7 +219,6 @@ export const addToGroup = async (req, res) => {
 
         return chatGroup
             ? res.status(200).json({ 
-                message: "Member added successfully!", 
                 chatGroup 
             })
             : res.status(404).json({ 

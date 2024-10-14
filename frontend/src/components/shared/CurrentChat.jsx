@@ -77,12 +77,13 @@ function CurrentChat() {
           selectedChat.isGroupChat ? (
             <UpdateGroupModal >
               <EyeOpenIcon
-                className='text-black w-6 h-6 font-bold'
+                
+                className='text-black w-6 h-6 font-bold hover:cursor-pointer'
               />
             </UpdateGroupModal>
           ) : (<SelectedUserProfileModal >
             <EyeOpenIcon
-              className='text-black w-6 h-6 font-bold'
+              className='text-black w-6 h-6 font-bold hover:cursor-pointer'
             />
           </SelectedUserProfileModal>)
         }
@@ -97,7 +98,7 @@ function CurrentChat() {
               key={index}
               className={`p-2 rounded-lg ${msg.sender === user.userId ? 'bg-blue-200 self-end' : 'bg-gray-200 self-start'}`}
             >
-              {msg.content}
+             <span className='text-sm'>me</span> {msg.content}
             </div>
           )) : <div className='flex justify-center '>
             <h1 className='text-xl'>
@@ -131,7 +132,7 @@ function CurrentChat() {
       </div>
     </div> : <div className='flex justify-center h-[100%] items-center'>
       <h1 >
-        select a chat to start conversation
+        Select a chat to start conversation
       </h1>
     </div>
   );

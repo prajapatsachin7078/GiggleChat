@@ -32,8 +32,6 @@ function SignUp() {
                 }
             );
 
-            console.log("Response: ", response);
-
             // Handle different response statuses here
             if (response.status === 201) {
                 // Handle success

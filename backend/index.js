@@ -37,7 +37,11 @@ app.use('/api/v1/message', messageRouter);
 //setting up socket io for real time connection with frontend
 
 const io = new Server(httpServer, {
-    pingTimeout: 60000,
+    reconnectionAttempts: Infinity,  // Try to reconnect indefinitely
+    reconnectionDelay: 5000,         // Wait 5 seconds before each reconnection attempt
+    reconnectionDelayMax: 10000,     // Maximum wait time for reconnection (10 seconds)
+    pingInterval: 25000,             // Keep the ping interval
+    pingTimeout: 60000,          // Keep the ping timeout
     cors: {
         origin: 'http://localhost:5173',
         methods: ["GET", "POST"],
@@ -53,10 +57,13 @@ io.on('connection', (socket) => {
         socket.emit('connected');
     })
 
-    socket.on('join chat', (chat) => {
-        socket.join(chat);
-        // console.log("User joined with chat : ", chat);
+    socket.on('join chat', (room) => {
+        socket.join(room);
     })
+
+   // socket for real time typing functionality
+    socket.on('typing', (room) => socket.to(room).emit("typing"))
+    socket.on('stop typing',(room)=>socket.to(room).emit('stop typing')) 
 
     socket.on('new message', (newMessageRecieved) => {
         var chat = newMessageRecieved.chat;

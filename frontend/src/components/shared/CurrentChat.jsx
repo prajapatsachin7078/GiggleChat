@@ -11,7 +11,7 @@ import { io } from "socket.io-client";
 import axios from "axios";
 import { UpdateGroupModal } from "./UpdateGroupModal";
 import { SelectedUserProfileModal } from "./SelectedUserProfileModal";
-import { EyeOpenIcon } from "@radix-ui/react-icons";
+import { DotsHorizontalIcon, EyeOpenIcon } from "@radix-ui/react-icons";
 
 var socket;
 const ENDPOINT = "http://localhost:3000";
@@ -22,6 +22,8 @@ function CurrentChat() {
   const [socketConnected, setSocketConnected] = useState(false);
   const { selectedChat, user } = useContext(UserContext);
   const messageContainerRef = useRef(null); // Reference to the message container
+  const [typing, setTyping] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
 
   async function fetchCurrentChat() {
     try {
@@ -45,9 +47,15 @@ function CurrentChat() {
     });
 
     socket.emit("setup", user);
-    socket.on("connection", () => setSocketConnected(true));
-    socket.on("connect", () => {
-      console.log("Connected to server");
+    socket.on("connected", () => setSocketConnected(true));
+
+    socket.on("typing", () => {
+      setIsTyping(true);
+
+    });
+    socket.on("stop typing", () => {
+      setIsTyping(false);
+  
     });
   }, [user]);
 
@@ -59,8 +67,8 @@ function CurrentChat() {
           selectedChat._id !== newMessageRecieved?.chat?._id
         ) {
           // Notification logic can go here if needed
-         console.log("Message recieved..")
-        //  console.log(selectedChat._id !== newMessageRecieved?.chat?._id);
+          console.log("Message recieved..");
+          //  console.log(selectedChat._id !== newMessageRecieved?.chat?._id);
         } else {
           setMessages((messages) => [...messages, newMessageRecieved]);
         }
@@ -73,7 +81,7 @@ function CurrentChat() {
         socket.off("message recieved", handleNewMessage);
       };
     }
-  }, [socket,selectedChat]);
+  }, [socket, selectedChat]);
 
   useEffect(() => {
     if (selectedChat && selectedChat._id) {
@@ -95,6 +103,7 @@ function CurrentChat() {
         chatId: selectedChat._id,
         content: message
       };
+      socket.emit('stop typing', selectedChat._id);
       try {
         const response = await axios.post(
           "http://localhost:3000/api/v1/message",
@@ -113,9 +122,33 @@ function CurrentChat() {
     }
   };
 
+  const handleInputChange = (e) => {
+    setMessage(e.target.value);
+
+      if(!socketConnected)return;
+   
+      if (!typing) {
+        setTyping(true);
+        socket.emit("typing", selectedChat._id);
+      }
+
+      let lastTypingTime = new Date().getTime(); // Track time when typing started
+      let timerLength = 3000;
+
+      setTimeout(() => {
+        let currentTime = new Date().getTime();
+        let timeDifference = currentTime - lastTypingTime;
+
+        if (timeDifference >= timerLength && typing) {
+          socket.emit("stop typing", selectedChat._id);
+          setTyping(false);
+        }
+      }, timerLength);
+  };
+
   return selectedChat ? (
     <div className="flex flex-col h-full lg:flex-grow border-l">
-      {/* Messages Section */}
+      {/* Head Section */}
       <div className="flex w-full justify-between px-2 py-1 items-center">
         <div className="flex items-center gap-1">
           <Avatar>
@@ -149,7 +182,7 @@ function CurrentChat() {
           </SelectedUserProfileModal>
         )}
       </div>
-
+      {/* Message Section */}
       <div
         ref={messageContainerRef}
         className="flex-1 overflow-y-auto p-4 bg-gray-100"
@@ -206,11 +239,20 @@ function CurrentChat() {
 
       {/* Input Field */}
       <div className="p-4 border-t bg-white">
+        {isTyping ? (
+          <div className="flex ml-2 w-20 h-8 justify-center align-middle rounded-md bg-gray-300 space-x-1 items-center border-1 shadow-md mb-2">
+            <span className="w-4 h-3 bg-gray-500 rounded-full animate-bounce delay-0"></span>
+            <span className="w-4 h-3 bg-gray-500 rounded-full animate-bounce delay-100"></span>
+            <span className="w-4 h-3 bg-gray-500 rounded-full animate-bounce delay-200"></span>
+          </div>
+        ) : (
+          <></>
+        )}
         <div className="flex">
           <input
             type="text"
             value={message}
-            onChange={(e) => setMessage(e.target.value)}
+            onChange={handleInputChange}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 handleSendMessage();
@@ -229,7 +271,7 @@ function CurrentChat() {
       </div>
     </div>
   ) : (
-    <div className="text-center flex justify-center items-center h-full hidden lg:block">
+    <div className="text-center flex justify-center items-center h-full  lg:block">
       <h1>Select a chat to start a conversation.</h1>
     </div>
   );

@@ -6,7 +6,7 @@ import SignUp from './components/pages/SignUp'
 import Login from './components/pages/Login'
 import ChatBox from './components/pages/ChatBox'
 import { useContext } from 'react'
-import UserContext from './context/userContext'
+import {UserContext} from './context/userContext'
 
 function App() {
 const {user} = useContext(UserContext);

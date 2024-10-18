@@ -15,7 +15,7 @@ import { Skeleton } from "../ui/skeleton";
 import { Badge } from "../ui/badge";
 import { Cross1Icon } from "@radix-ui/react-icons";
 import { toast } from "@/hooks/use-toast";
-import UserContext from "@/context/userContext";
+import {UserContext} from "@/context/userContext";
 
 export function CreateNewGroup({ children }) {
     const [participants, setParticipants] = useState([]);

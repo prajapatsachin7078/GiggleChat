@@ -1,6 +1,3 @@
-// ChatInput.js
-import React, { useState } from "react";
-
 const ChatInput = ({
   handleSendMessage,
   handleInputChange,

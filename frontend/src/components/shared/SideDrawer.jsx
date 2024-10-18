@@ -15,7 +15,7 @@ import {
 import axios from 'axios'; // Import Axios
 import { Skeleton } from '../ui/skeleton'; // Import your Skeleton component
 import UserSearchList from "./UserSearchList";
-import UserContext from "@/context/userContext";
+import {UserContext} from "@/context/userContext";
 
 function SideDrawer() {
     const [search, setSearch] = useState("");

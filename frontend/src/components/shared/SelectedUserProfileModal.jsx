@@ -2,7 +2,7 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, Di
 import { Button } from "@/components/ui/button"
 import { Avatar } from "@/components/ui/avatar"
 import { useContext } from "react"
-import UserContext from "@/context/userContext"
+import {UserContext} from "@/context/userContext"
 import { AvatarFallback, AvatarImage } from "@radix-ui/react-avatar"
 
 export function SelectedUserProfileModal({ children }) {

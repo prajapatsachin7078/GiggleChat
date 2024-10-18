@@ -7,7 +7,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from '@/hooks/use-toast';
 import { ToastAction } from '@radix-ui/react-toast';
-import UserContext from '@/context/userContext';
+import {UserContext} from '@/context/userContext';
 
 function Login() {
     const [input, setInput] = useState({

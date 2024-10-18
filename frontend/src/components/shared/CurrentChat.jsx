@@ -1,15 +1,16 @@
 // CurrentChat.js
 import React, { useContext, useEffect, useState, useRef } from "react";
-import UserContext from "@/context/userContext";
+
 
 import { io } from "socket.io-client";
 import axios from "axios";
 import ChatHeader from "./ChatHeader";
 import ChatMessages from "./ChatMessages";
 import ChatInput from "./ChatInput";
+import { UserContext } from "@/context/userContext";
 
 const ENDPOINT = "http://localhost:3000";
-  var socket;
+var socket;
 
 function CurrentChat() {
   const [message, setMessage] = useState("");
@@ -17,11 +18,9 @@ function CurrentChat() {
   const [socketConnected, setSocketConnected] = useState(false);
   const { selectedChat, user } = useContext(UserContext);
   const messageContainerRef = useRef(null);
-  
-   const [typing, setTyping] = useState(false);
+
+  const [typing, setTyping] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
-
-
 
   async function fetchCurrentChat() {
     try {
@@ -58,7 +57,8 @@ function CurrentChat() {
           !selectedChat ||
           selectedChat._id !== newMessageRecieved?.chat?._id
         ) {
-          console.log("Message recieved..");
+          // Notification 
+
         } else {
           setMessages((messages) => [...messages, newMessageRecieved]);
         }
@@ -110,27 +110,28 @@ function CurrentChat() {
     }
   };
 
-    const handleInputChange = (e) => {
-      setMessage(e.target.value);
-      if (!typing) {
-        setTyping(true);
-        socket.emit("typing", selectedChat._id);
+  const handleInputChange = (e) => {
+    setMessage(e.target.value);
+    if (!socketConnected) return;
+    if (!typing) {
+      setTyping(true);
+      socket.emit("typing", selectedChat._id);
+    }
+
+    // Debouncing typing indicator
+    let lastTypingTime = new Date().getTime();
+    const timerLength = 3000;
+
+    setTimeout(() => {
+      let currentTime = new Date().getTime();
+      let timeDifference = currentTime - lastTypingTime;
+
+      if (timeDifference >= timerLength && typing) {
+        socket.emit("stop typing", selectedChat._id);
+        setTyping(false);
       }
-
-      // Debouncing typing indicator
-      let lastTypingTime = new Date().getTime();
-      const timerLength = 3000;
-
-      setTimeout(() => {
-        let currentTime = new Date().getTime();
-        let timeDifference = currentTime - lastTypingTime;
-
-        if (timeDifference >= timerLength && typing) {
-          socket.emit("stop typing", selectedChat._id);
-          setTyping(false);
-        }
-      }, timerLength);
-    };
+    }, timerLength);
+  };
 
   return selectedChat ? (
     <div className="flex flex-col h-full lg:flex-grow border-l">
@@ -141,7 +142,6 @@ function CurrentChat() {
         message={message}
         handleInputChange={handleInputChange}
         isTyping={isTyping}
-
       />
     </div>
   ) : (

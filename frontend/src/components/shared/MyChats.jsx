@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import axios from 'axios';
 import { Skeleton } from '../ui/skeleton';
-import UserContext from "@/context/userContext";
+import {UserContext} from "@/context/userContext";
 import { PlusIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import { CreateNewGroup } from "./CreateNewGroup";

@@ -165,7 +165,7 @@ function CurrentChat() {
   };
 
   return selectedChat ? (
-    <div className="flex flex-col h-full lg:flex-grow border-l">
+    <div className="flex flex-col h-full  border-l">
       <ChatHeader selectedChat={selectedChat} user={user} />
       <ChatMessages messages={messages} user={user} />
       <ChatInput

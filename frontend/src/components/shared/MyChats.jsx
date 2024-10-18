@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
-import axios from 'axios';
-import { Skeleton } from '../ui/skeleton';
-import {UserContext} from "@/context/userContext";
+import axios from "axios";
+import { Skeleton } from "../ui/skeleton";
+import { UserContext } from "@/context/userContext";
 import { PlusIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import { CreateNewGroup } from "./CreateNewGroup";
@@ -12,14 +12,23 @@ function MyChats() {
   const [search, setSearch] = useState("");
   const [filteredChats, setFilteredChats] = useState([]);
 
-  const { chats, selectedChat, setChats, setSelectedChat } = useContext(UserContext);
+  const {
+    chats,
+    selectedChat,
+    setChats,
+    setSelectedChat,
+    notification,
+    fetchAgain
+  } = useContext(UserContext);
 
   const fetchChats = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/api/v1/chat', { withCredentials: true });
-      const { populatedChats, currentUserId } = response.data
+      const response = await axios.get("http://localhost:3000/api/v1/chat", {
+        withCredentials: true
+      });
+      const { populatedChats, currentUserId } = response.data;
       setChats(populatedChats);
-      setFilteredChats(populatedChats); 
+      setFilteredChats(populatedChats);
       setcurrentUserId(currentUserId);
     } catch (error) {
       console.error("Error fetching chats:", error);
@@ -30,17 +39,17 @@ function MyChats() {
 
   useEffect(() => {
     fetchChats();
-  }, [selectedChat]);
+  }, [selectedChat, notification, fetchAgain]);
 
   useEffect(() => {
     // Filter chats based on search input
     if (search) {
-      const results = chats.filter(chat => {
+      const results = chats.filter((chat) => {
         // Check if it's a group chat or individual chat
         if (chat.isGroupChat) {
           return chat.name.toLowerCase().includes(search.toLowerCase());
         } else {
-          return chat.participants.some(participant =>
+          return chat.participants.some((participant) =>
             participant.name.toLowerCase().includes(search.toLowerCase())
           );
         }
@@ -51,13 +60,14 @@ function MyChats() {
     }
   }, [search, chats]);
 
-
   return (
     <div className="mx-auto w-full p-4 ">
       <div className="flex justify-between">
         <h1 className="text-2xl font-bold mb-4">My Chats</h1>
         <CreateNewGroup>
-          <Button>New Group <PlusIcon /> </Button>
+          <Button>
+            New Group <PlusIcon />{" "}
+          </Button>
         </CreateNewGroup>
       </div>
       <div className="mb-4">
@@ -81,7 +91,7 @@ function MyChats() {
               <p className="text-gray-500">No chats found.</p>
             ) : (
               <ul>
-                {filteredChats.map(chat => (
+                {filteredChats.map((chat) => (
                   <li
                     key={chat._id}
                     onClick={() => {
@@ -89,25 +99,53 @@ function MyChats() {
                     }}
                     className={`border mb-2 hover:bg-green-300 rounded-lg bg-white shadow hover:shadow-lg transition-shadow duration-200 cursor-pointer `}
                   >
-                    <div className={`flex p-2 items-center space-x-4 ${selectedChat?._id === chat?._id ? 'bg-green-300' : ''}`}
+                    <div
+                      className={`flex p-2 items-center space-x-4 ${
+                        selectedChat?._id === chat?._id ? "bg-green-300" : ""
+                      }`}
                     >
-                      
                       {chat.isGroupChat ? (
-                        <img src={chat.avatar} alt={chat.name} className="h-10 w-10 rounded-full" />
+                        <img
+                          src={chat.avatar}
+                          alt={chat.name}
+                          className="h-10 w-10 rounded-full"
+                        />
                       ) : (
-                        chat.participants.filter(participant => participant._id !== currentUserId).map(participant => (
-                          <img key={participant._id} src={participant.avatar.url} alt={participant.name} className="h-10 w-10 rounded-full" />
-                        ))
+                        chat.participants
+                          .filter(
+                            (participant) => participant._id !== currentUserId
+                          )
+                          .map((participant) => (
+                            <img
+                              key={participant._id}
+                              src={participant.avatar.url}
+                              alt={participant.name}
+                              className="h-10 w-10 rounded-full"
+                            />
+                          ))
                       )}
                       <div className="flex flex-col">
                         {chat.isGroupChat ? (
-                          <div className="font-semibold text-lg">{chat.name}</div>
+                          <div className="font-semibold text-lg">
+                            {chat.name}
+                          </div>
                         ) : (
-                          chat.participants.filter(participant => participant._id !== currentUserId).map(participant => (
-                            <div key={participant._id} className="font-semibold text-lg">{participant.name}</div>
-                          ))
+                          chat.participants
+                            .filter(
+                              (participant) => participant._id !== currentUserId
+                            )
+                            .map((participant) => (
+                              <div
+                                key={participant._id}
+                                className="font-semibold text-lg"
+                              >
+                                {participant.name}
+                              </div>
+                            ))
                         )}
-                        <p className="text-gray-600">{chat?.lastMessage?.content || "No messages yet."}</p>
+                        <p className="text-gray-600">
+                          {chat?.lastMessage?.content || "No messages yet."}
+                        </p>
                       </div>
                     </div>
                   </li>

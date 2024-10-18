@@ -1,7 +1,6 @@
 // CurrentChat.js
 import React, { useContext, useEffect, useState, useRef } from "react";
 
-
 import { io } from "socket.io-client";
 import axios from "axios";
 import ChatHeader from "./ChatHeader";
@@ -16,7 +15,8 @@ function CurrentChat() {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [socketConnected, setSocketConnected] = useState(false);
-  const { selectedChat, user } = useContext(UserContext);
+  const { selectedChat, user, setNotification, setFetchAgain } =
+    useContext(UserContext);
   const messageContainerRef = useRef(null);
 
   const [typing, setTyping] = useState(false);
@@ -46,9 +46,35 @@ function CurrentChat() {
     socket.emit("setup", user);
     socket.on("connected", () => setSocketConnected(true));
 
-    socket.on("typing", () => setIsTyping(true));
-    socket.on("stop typing", () => setIsTyping(false));
   }, [user]);
+
+  useEffect(() => {
+    if (socket && selectedChat) {
+
+      const handleTyping = (room) => {
+        // Set typing to true if both are in same chat room
+        if (room === selectedChat._id) {
+          setIsTyping(true);
+        }
+      };
+
+      const handleStopTyping = (room) => {
+        // Only stop typing if both sender and receiver are in same chat room
+   
+        if (room === selectedChat._id) {
+          setIsTyping(false);
+        }
+      };
+
+      socket.on("typing", handleTyping);
+      socket.on("stop typing", handleStopTyping);
+
+      return () => {
+        socket.off("typing", handleTyping);
+        socket.off("stop typing", handleStopTyping);
+      };
+    }
+  }, [socket, selectedChat]);
 
   useEffect(() => {
     if (socket) {
@@ -57,13 +83,18 @@ function CurrentChat() {
           !selectedChat ||
           selectedChat._id !== newMessageRecieved?.chat?._id
         ) {
-          // Notification 
+          // Notification
 
+          setNotification((prevNotificaiton) => [
+            ...prevNotificaiton,
+            newMessageRecieved
+          ]);
+          // noti
         } else {
           setMessages((messages) => [...messages, newMessageRecieved]);
         }
       };
-
+      setFetchAgain("");
       socket.on("message recieved", handleNewMessage);
 
       return () => {

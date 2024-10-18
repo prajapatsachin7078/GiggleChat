@@ -7,6 +7,7 @@ export const UserProvider = ({ children }) => {
   const [chats, setChats] = useState([]);
   const [selectedChat, setSelectedChat] = useState();
   const [notification, setNotification] = useState([]);
+  const [fetchAgain, setFetchAgain] = useState('');
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
     setUser(userInfo);
@@ -21,7 +22,9 @@ export const UserProvider = ({ children }) => {
         selectedChat,
         setSelectedChat,
         notification,
-        setNotification
+        setNotification,
+        setFetchAgain,
+        fetchAgain
       }}
     >
       {children}

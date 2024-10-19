@@ -79,17 +79,15 @@ function CurrentChat() {
   useEffect(() => {
     if (socket) {
       const handleNewMessage = (newMessageRecieved) => {
+        // If participants are not in the chat room send the notification
         if (
           !selectedChat ||
           selectedChat._id !== newMessageRecieved?.chat?._id
         ) {
-          // Notification
-
           setNotification((prevNotificaiton) => [
             ...prevNotificaiton,
             newMessageRecieved
           ]);
-          // noti
         } else {
           setMessages((messages) => [...messages, newMessageRecieved]);
         }
@@ -138,6 +136,7 @@ function CurrentChat() {
         console.error("Error sending message: ", error);
       }
       setMessage("");
+      setFetchAgain("/");
     }
   };
 

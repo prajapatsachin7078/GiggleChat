@@ -179,10 +179,13 @@ function CurrentChat() {
       />
     </div>
   ) : (
-    <div className="text-center flex align-middle justify-center items-center h-full lg:block">
-      <h1
-      className="self-center"
-      >Select a chat to start a conversation.</h1>
+    <div className="flex justify-center h-full">
+      <h1 className="self-center text-4xl text-center">
+        Select a chat to start a conversation.
+        <span className="inline-block animate-pulse  delay-75">
+          👋
+        </span>
+      </h1>
     </div>
   );
 }

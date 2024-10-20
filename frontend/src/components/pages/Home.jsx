@@ -1,14 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Button } from '../ui/button';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion'; // For animations
 import { Card, CardHeader, CardContent } from '../ui/card';
 import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from '../ui/tooltip';
 import { MessageSquare, Lock, Users } from 'lucide-react'; // Import specific icons
+import { UserContext } from '@/context/userContext';
 
 function Home() {
   const navigate = useNavigate();
   const [featureIndex, setFeatureIndex] = useState(0);
+  const {user} = useContext(UserContext);
   const features = [
     "Instant Messaging",
     "Group Chats",
@@ -108,37 +110,57 @@ function Home() {
         transition={{ duration: 0.8 }}
         className="flex space-x-4 mt-10"
       >
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                onClick={() => navigate("/signup")}
-                className="bg-white text-blue-600 font-semibold"
-              >
-                Sign Up
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Create a new account</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        {user ? (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  onClick={() => navigate("/chats")}
+                  className="bg-white text-blue-600 font-semibold"
+                >
+                  Chats
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Go to Chats</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        ) : (
+          <>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    onClick={() => navigate("/signup")}
+                    className="bg-white text-blue-600 font-semibold"
+                  >
+                    Sign Up
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Create a new account</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
 
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                onClick={() => navigate("/login")}
-                className="bg-white text-blue-600 font-semibold"
-              >
-                Login
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Access your account</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    onClick={() => navigate("/login")}
+                    className="bg-white text-blue-600 font-semibold"
+                  >
+                    Login
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Access your account</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </>
+        )}
       </motion.div>
     </div>
   );

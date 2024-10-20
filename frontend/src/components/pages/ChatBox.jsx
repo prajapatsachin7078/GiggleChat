@@ -14,7 +14,7 @@ function ChatBox() {
         <Header />
         <ResizablePanelGroup direction="horizontal">
           <ResizablePanel
-            className={`h-[90vh] overflow-y-auto min-w-[20%] ${
+            className={`h-[90vh] overflow-y-auto min-w-[30%] ${
               selectedChat ? "hidden sm:block" : ""
             }`}
           >

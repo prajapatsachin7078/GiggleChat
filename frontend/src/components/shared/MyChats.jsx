@@ -81,10 +81,12 @@ function MyChats() {
       </div>
       <div>
         {loading ? (
-          <div className="flex items-center justify-around ">
-            <Skeleton className="h-12 w-12 rounded-full" />
-            <Skeleton className="h-12 w-[90%]  rounded" />
-          </div>
+          Array.from({ length: 8 }).map((_, index) => (
+            <div key={index} className="flex items-center justify-around mb-2">
+              <Skeleton className="h-14 w-14 rounded-full" />
+              <Skeleton className="h-14 w-[85%]  rounded" />
+            </div>
+          ))
         ) : (
           <div className="overflow-y-auto h-[90vh]">
             {filteredChats.length === 0 ? (
@@ -144,7 +146,8 @@ function MyChats() {
                             ))
                         )}
                         <p className="text-gray-600">
-                          {chat?.lastMessage?.content.slice(0,20) || "No messages yet."}
+                          {chat?.lastMessage?.content.slice(0, 20) ||
+                            "No messages yet."}
                         </p>
                       </div>
                     </div>

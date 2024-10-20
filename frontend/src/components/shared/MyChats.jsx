@@ -81,9 +81,9 @@ function MyChats() {
       </div>
       <div>
         {loading ? (
-          <div className="flex flex-col space-y-4">
-            <Skeleton className="h-12 w-full rounded" />
-            <Skeleton className="h-12 w-full rounded" />
+          <div className="flex items-center justify-around ">
+            <Skeleton className="h-12 w-12 rounded-full" />
+            <Skeleton className="h-12 w-[90%]  rounded" />
           </div>
         ) : (
           <div className="overflow-y-auto h-[90vh]">
@@ -144,7 +144,7 @@ function MyChats() {
                             ))
                         )}
                         <p className="text-gray-600">
-                          {chat?.lastMessage?.content || "No messages yet."}
+                          {chat?.lastMessage?.content.slice(0,20) || "No messages yet."}
                         </p>
                       </div>
                     </div>

@@ -12,12 +12,12 @@ function App() {
 const {user} = useContext(UserContext);
   return (
     <Routes>
-      <Route path='/' element={<Home/>} />
-      <Route path = '/signup' element={<SignUp/>}/>
-      <Route path = '/login' element={<Login/>}/>
-      <Route path ='/chats' element={user?<ChatBox/>:<Login/>}/>
+      <Route path="/" element={<Home />} />
+      <Route path="/signup" element={user ? <ChatBox /> : <SignUp />} />
+      <Route path="/login" element={user ? <ChatBox /> : <Login />} />
+      <Route path="/chats" element={user ? <ChatBox /> : <Login />} />
     </Routes>
-  )
+  );
 }
 
 export default App

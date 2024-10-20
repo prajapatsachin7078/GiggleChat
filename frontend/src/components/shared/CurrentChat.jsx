@@ -18,12 +18,14 @@ function CurrentChat() {
   const { selectedChat, user, setNotification, setFetchAgain } =
     useContext(UserContext);
   const messageContainerRef = useRef(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [typing, setTyping] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
 
   async function fetchCurrentChat() {
     try {
+      setIsLoading(true);
       const response = await axios.get(
         `http://localhost:3000/api/v1/message/${selectedChat._id}`,
         {
@@ -34,6 +36,8 @@ function CurrentChat() {
       socket.emit("join chat", selectedChat._id);
     } catch (error) {
       console.error("Error fetching messages: ", error);
+    }finally{
+      setIsLoading(false);
     }
   }
 
@@ -166,7 +170,7 @@ function CurrentChat() {
   return selectedChat ? (
     <div className="flex flex-col h-full  border-l">
       <ChatHeader selectedChat={selectedChat} user={user} />
-      <ChatMessages messages={messages} user={user} />
+      <ChatMessages messages={messages} isLoading={isLoading} user={user} />
       <ChatInput
         handleSendMessage={handleSendMessage}
         message={message}
@@ -175,8 +179,10 @@ function CurrentChat() {
       />
     </div>
   ) : (
-    <div className="text-center flex justify-center items-center h-full lg:block">
-      <h1>Select a chat to start a conversation.</h1>
+    <div className="text-center flex align-middle justify-center items-center h-full lg:block">
+      <h1
+      className="self-center"
+      >Select a chat to start a conversation.</h1>
     </div>
   );
 }

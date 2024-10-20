@@ -53,49 +53,49 @@ function Home() {
       {/* Feature Cards Section */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 w-full max-w-5xl">
         {/* Feature 1 */}
-        <motion.div
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <Card className="bg-white text-black shadow-lg">
+        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <Card className="bg-white text-black shadow-lg h-[200px]">
             <CardHeader className="flex justify-between items-center">
               <h2 className="text-xl font-semibold">Fast Messaging</h2>
-              <MessageSquare className="w-6 h-6 text-blue-500" /> {/* Correct Icon */}
+              <MessageSquare className="w-6 h-6 text-blue-500" />{" "}
+              {/* Correct Icon */}
             </CardHeader>
             <CardContent>
-              <p>Experience lightning-fast messaging with real-time updates and notifications.</p>
+              <p>
+                Experience lightning-fast messaging with real-time updates and
+                notifications.
+              </p>
             </CardContent>
           </Card>
         </motion.div>
 
         {/* Feature 2 */}
-        <motion.div
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <Card className="bg-white text-black shadow-lg">
+        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <Card className="bg-white text-black shadow-lg h-[200px]">
             <CardHeader className="flex justify-between items-center">
               <h2 className="text-xl font-semibold">Secure Chats</h2>
               <Lock className="w-6 h-6 text-blue-500" /> {/* Correct Icon */}
             </CardHeader>
             <CardContent>
-              <p>Your conversations are protected with end-to-end encryption, ensuring privacy.</p>
+              <p>
+                Your conversations are protected with end-to-end encryption,
+                ensuring privacy.
+              </p>
             </CardContent>
           </Card>
         </motion.div>
 
         {/* Feature 3 */}
-        <motion.div
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <Card className="bg-white text-black shadow-lg">
+        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <Card className="bg-white text-black shadow-lg h-[200px]">
             <CardHeader className="flex justify-between items-center">
               <h2 className="text-xl font-semibold">Group Chats</h2>
               <Users className="w-6 h-6 text-blue-500" /> {/* Correct Icon */}
             </CardHeader>
             <CardContent>
-              <p>Create and manage groups for friends, family, or work with ease.</p>
+              <p>
+                Create and manage groups for friends, family, or work with ease.
+              </p>
             </CardContent>
           </Card>
         </motion.div>
@@ -111,7 +111,10 @@ function Home() {
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button onClick={() => navigate('/signup')} className="bg-white text-blue-600 font-semibold">
+              <Button
+                onClick={() => navigate("/signup")}
+                className="bg-white text-blue-600 font-semibold"
+              >
                 Sign Up
               </Button>
             </TooltipTrigger>
@@ -124,7 +127,10 @@ function Home() {
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button onClick={() => navigate('/login')} className="bg-white text-blue-600 font-semibold">
+              <Button
+                onClick={() => navigate("/login")}
+                className="bg-white text-blue-600 font-semibold"
+              >
                 Login
               </Button>
             </TooltipTrigger>

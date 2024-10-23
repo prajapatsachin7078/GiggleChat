@@ -16,7 +16,7 @@ import { HoverCard, HoverCardContent } from "../ui/hover-card";
 import { HoverCardTrigger } from "@radix-ui/react-hover-card";
 
 function Header() {
-  const { user, notification, setNotification, setSelectedChat } =
+  const { user, notification,setUser, setNotification, setSelectedChat } =
     useContext(UserContext);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const navigate = useNavigate();
@@ -32,11 +32,11 @@ function Header() {
           withCredentials: true
         }
       );
-      console.log(response.data);
       toast({
         description: response.data.message
       });
       localStorage.removeItem("userInfo");
+      setUser(null);
       navigate("/");
     } catch (error) {
       console.log("Try againt!");

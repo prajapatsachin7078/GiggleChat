@@ -99,7 +99,7 @@ export const userLogout = (req, res) => {
     // Clear the token cookie
     res.clearCookie('token');
 
-    return res.status(200).json({ message: "Logout successful, token cleared." });
+    return res.status(200).json({ message: "Logout successful!" });
 };
 
 export const getUsers = async (req, res) => {

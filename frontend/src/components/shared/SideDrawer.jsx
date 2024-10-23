@@ -16,14 +16,18 @@ import axios from 'axios'; // Import Axios
 import { Skeleton } from '../ui/skeleton'; // Import your Skeleton component
 import UserSearchList from "./UserSearchList";
 import {UserContext} from "@/context/userContext";
+import { toast } from "@/hooks/use-toast";
+import { ToastAction } from "@radix-ui/react-toast";
+import { useNavigate } from "react-router-dom";
+
 
 function SideDrawer() {
+    const navigate = useNavigate();
     const [search, setSearch] = useState("");
     const [searchResult, setSearchResult] = useState([]);
     const [loading, setLoading] = useState(false);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false); // Manage drawer state
     const { setSelectedChat } = useContext(UserContext);
-
     // Fetch users based on search input
     async function fetchData() {
         try {
@@ -44,6 +48,8 @@ function SideDrawer() {
     };
 
     const chatStartHandler = async(userId) => {
+        // Close the drawer 
+        setIsDrawerOpen(false);
         try {
             const response = await axios.post('http://localhost:3000/api/v1/chat',{
                 userId
@@ -53,10 +59,15 @@ function SideDrawer() {
             // console.log(response.data);
             setSelectedChat(response?.data);
         } catch (error) {
+            toast({
+              description: "Chat Couldn't created!",
+              action: (
+                <ToastAction altText="try again" onClick={()=>{
+                    setIsDrawerOpen(true);
+                }}>Try Again</ToastAction>
+              )
+            });
             console.log("Error while creating new chat..");
-        }finally{
-            // Close the drawer after initiating the chat
-            setIsDrawerOpen(false);
         }
     };
 

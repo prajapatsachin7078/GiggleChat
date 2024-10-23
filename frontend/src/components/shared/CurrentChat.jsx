@@ -133,13 +133,13 @@ function CurrentChat() {
             withCredentials: true
           }
         );
-
+        setMessage("");
         socket.emit("new message", response.data);
         setMessages((prevMsg) => [...prevMsg, response.data]);
       } catch (error) {
         console.error("Error sending message: ", error);
       }
-      setMessage("");
+      
       setFetchAgain("/");
     }
   };

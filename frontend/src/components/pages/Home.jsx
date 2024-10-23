@@ -26,7 +26,7 @@ function Home() {
     }, 3000); // Change feature every 3 seconds
 
     return () => clearInterval(interval);
-  }, [features.length]);
+  }, [features.length,user]);
 
   return (
     <div className="h-screen bg-gradient-to-b from-blue-500 to-indigo-600 text-white flex flex-col justify-center items-center">

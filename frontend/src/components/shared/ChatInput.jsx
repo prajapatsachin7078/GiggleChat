@@ -1,12 +1,11 @@
+import { PaperclipIcon } from "lucide-react";
+
 const ChatInput = ({
   handleSendMessage,
   handleInputChange,
   message,
-  isTyping,
+  isTyping
 }) => {
-   
-
-
   return (
     <div className="p-4 border-t bg-white">
       {isTyping && (
@@ -16,7 +15,9 @@ const ChatInput = ({
           <span className="w-4 h-3 bg-gray-500 rounded-full animate-pulse delay-200"></span>
         </div>
       )}
-      <div className="flex">
+      <div className="flex items-center">
+        <PaperclipIcon  className="mr-2 hover:cursor-pointer"/>
+
         <input
           type="text"
           value={message}

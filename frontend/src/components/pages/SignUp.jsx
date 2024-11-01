@@ -128,6 +128,7 @@ function SignUp() {
           <div className="relative">
             <Input
               type={inputType}
+              
               id="password"
               name="password"
               value={input.password}
@@ -138,7 +139,7 @@ function SignUp() {
                 <EyeIcon className="absolute top-2 end-2" />
               ) : (
                 <EyeOffIcon className="absolute top-2 end-2" />
-              )}
+              )}    
             </span>
           </div>
         </CardContent>

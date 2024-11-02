@@ -8,6 +8,7 @@ import axios from "axios";
 import { toast } from "@/hooks/use-toast";
 
 import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { API } from "@/lib/utils";
 
 function SignUp() {
   const [input, setInput] = useState({
@@ -30,13 +31,9 @@ function SignUp() {
     };
 
     try {
-      const response = await axios.post(
-        "http://localhost:3000/api/v1/user/signup",
-        data,
-        {
-          withCredentials: true // For cookies, etc.
-        }
-      );
+      const response = await axios.post(`${API}/api/v1/user/signup`, data, {
+        withCredentials: true // For cookies, etc.
+      });
 
       // Handle different response statuses here
       if (response.status === 201) {

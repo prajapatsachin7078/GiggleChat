@@ -5,6 +5,7 @@ import { UserContext } from "@/context/userContext";
 import { PlusIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import { CreateNewGroup } from "./CreateNewGroup";
+import { API } from "@/lib/utils";
 
 function MyChats() {
   const [currentUserId, setcurrentUserId] = useState();
@@ -23,7 +24,7 @@ function MyChats() {
 
   const fetchChats = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/api/v1/chat", {
+      const response = await axios.get(`${API}/api/v1/user/chat`, {
         withCredentials: true
       });
       const { populatedChats, currentUserId } = response.data;

@@ -14,6 +14,7 @@ import { Skeleton } from "../ui/skeleton";
 import { Badge } from "../ui/badge";
 import { HoverCard, HoverCardContent } from "../ui/hover-card";
 import { HoverCardTrigger } from "@radix-ui/react-hover-card";
+import { API } from "@/lib/utils";
 
 function Header() {
   const { user, notification,setUser, setNotification, setSelectedChat } =
@@ -27,7 +28,7 @@ function Header() {
   const handleLogOut = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:3000/api/v1/user/logout",
+        `${API}/api/v1/user/logout`,
         {
           withCredentials: true
         }

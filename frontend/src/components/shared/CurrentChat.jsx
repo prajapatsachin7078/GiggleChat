@@ -1,4 +1,4 @@
-// CurrentChat.js
+
 import React, { useContext, useEffect, useState, useRef } from "react";
 
 import { io } from "socket.io-client";
@@ -7,8 +7,9 @@ import ChatHeader from "./ChatHeader";
 import ChatMessages from "./ChatMessages";
 import ChatInput from "./ChatInput";
 import { UserContext } from "@/context/userContext";
+import { API } from "@/lib/utils";
 
-const ENDPOINT = "http://localhost:3000";
+const ENDPOINT = API;
 var socket;
 
 function CurrentChat() {
@@ -27,7 +28,7 @@ function CurrentChat() {
     try {
       setIsLoading(true);
       const response = await axios.get(
-        `http://localhost:3000/api/v1/message/${selectedChat._id}`,
+        `${API}/api/v1/message/${selectedChat._id}`,
         {
           withCredentials: true
         }
@@ -127,7 +128,7 @@ function CurrentChat() {
       socket.emit("stop typing", selectedChat._id);
       try {
         const response = await axios.post(
-          "http://localhost:3000/api/v1/message",
+          `${API}/api/v1/message`,
           newMessage,
           {
             withCredentials: true

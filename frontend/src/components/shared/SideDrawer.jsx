@@ -19,6 +19,7 @@ import {UserContext} from "@/context/userContext";
 import { toast } from "@/hooks/use-toast";
 import { ToastAction } from "@radix-ui/react-toast";
 import { useNavigate } from "react-router-dom";
+import { API } from "@/lib/utils";
 
 
 function SideDrawer() {
@@ -31,7 +32,7 @@ function SideDrawer() {
     // Fetch users based on search input
     async function fetchData() {
         try {
-            const response = await axios.get(`http://localhost:3000/api/v1/user/get-users?search=${search}`, {
+            const response = await axios.get(`${API}/api/v1/user/get-users?search=${search}`, {
                 withCredentials: true // Ensure credentials are sent
             });
             setSearchResult(response?.data?.users); // Assume the response has user data
@@ -51,7 +52,7 @@ function SideDrawer() {
         // Close the drawer 
         setIsDrawerOpen(false);
         try {
-            const response = await axios.post('http://localhost:3000/api/v1/chat',{
+            const response = await axios.post(`${API}/api/v1/chat`,{
                 userId
             },{
                 withCredentials: true

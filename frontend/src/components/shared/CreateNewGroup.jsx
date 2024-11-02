@@ -16,6 +16,7 @@ import { Badge } from "../ui/badge";
 import { Cross1Icon } from "@radix-ui/react-icons";
 import { toast } from "@/hooks/use-toast";
 import {UserContext} from "@/context/userContext";
+import { API } from "@/lib/utils";
 
 export function CreateNewGroup({ children }) {
     const [participants, setParticipants] = useState([]);
@@ -30,7 +31,7 @@ export function CreateNewGroup({ children }) {
         setSearch(e.target.value);
 
         try {
-            const response = await axios.get(`http://localhost:3000/api/v1/user/get-users?search=${search}`, {
+            const response = await axios.get(`${API}/api/v1/user/get-users?search=${search}`, {
                 withCredentials: true
             })
             setSearchResult(response.data.users);
@@ -61,7 +62,7 @@ export function CreateNewGroup({ children }) {
             try {
                 // Extracting array with participants id
                 const users = participants.map(participant => participant.id);
-                const response = await axios.post("http://localhost:3000/api/v1/chat/group", {
+                const response = await axios.post(`${API}/api/v1/chat/group`, {
                     participants: users,
                     name
                 }, {

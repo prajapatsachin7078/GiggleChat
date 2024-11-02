@@ -16,6 +16,7 @@ import { Badge } from "../ui/badge";
 import { Cross1Icon } from "@radix-ui/react-icons";
 import { toast } from "@/hooks/use-toast";
 import {UserContext} from "@/context/userContext";
+import { API } from "@/lib/utils";
 
 export function UpdateGroupModal({ children }) {
     const [participants, setParticipants] = useState([]);
@@ -42,7 +43,7 @@ export function UpdateGroupModal({ children }) {
         setSearch(e.target.value);
 
         try {
-            const response = await axios.get(`http://localhost:3000/api/v1/user/get-users?search=${search}`, {
+            const response = await axios.get(`${API}/api/v1/user/get-users?search=${search}`, {
                 withCredentials: true
             });
             setSearchResult(response.data.users);
@@ -63,7 +64,7 @@ export function UpdateGroupModal({ children }) {
         }
 
         try {
-            const response = await axios.put(`http://localhost:3000/api/v1/chat/rename/${selectedChat._id}/${name}`, {}, {
+            const response = await axios.put(`${API}/api/v1/chat/rename/${selectedChat._id}/${name}`, {}, {
                 withCredentials: true
             });
             setSelectedChat({ ...selectedChat, name: response.data.name });
@@ -76,7 +77,7 @@ export function UpdateGroupModal({ children }) {
     const handleAddParticipant = async (id, userName) => {
         if (!participants.some(user => user._id === id)) {
             try {
-                const response = await axios.put(`http://localhost:3000/api/v1/chat/add/${selectedChat._id}/${id}`, {}, {
+                const response = await axios.put(`${API}/api/v1/chat/add/${selectedChat._id}/${id}`, {}, {
                     withCredentials: true
                 });
                 setParticipants(response.data.chatGroup.participants);
@@ -90,7 +91,7 @@ export function UpdateGroupModal({ children }) {
 
     const handleRemoveParticipant = async (id) => {
         try {
-            const response = await axios.put(`http://localhost:3000/api/v1/chat/remove/${selectedChat._id}/${id}`, {}, {
+            const response = await axios.put(`${API}/api/v1/chat/remove/${selectedChat._id}/${id}`, {}, {
                 withCredentials: true
             });
             setParticipants(response.data.chatGroup.participants);
@@ -103,7 +104,7 @@ export function UpdateGroupModal({ children }) {
 
     const handleLeaveGroup = async () => {
         try {
-            const response = await axios.put(`http://localhost:3000/api/v1/chat/leave/${selectedChat._id}`, {}, {
+            const response = await axios.put(`${API}/api/v1/chat/leave/${selectedChat._id}`, {}, {
                 withCredentials: true
             });
             setChats(prevChats => prevChats.filter(chat => chat._id !== selectedChat._id));
@@ -117,7 +118,7 @@ export function UpdateGroupModal({ children }) {
     // New handler for deleting the group
     const handleDeleteGroup = async () => {
         try {
-            await axios.delete(`http://localhost:3000/api/v1/chat/delete/${selectedChat._id}`, {
+            await axios.delete(`${API}/api/v1/chat/delete/${selectedChat._id}`, {
                 withCredentials: true
             });
             setChats(prevChats => prevChats.filter(chat => chat._id !== selectedChat._id));

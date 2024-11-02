@@ -9,6 +9,7 @@ import { toast } from "@/hooks/use-toast";
 import { ToastAction } from "@radix-ui/react-toast";
 import { UserContext } from "@/context/userContext";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { API } from "@/lib/utils";
 
 function Login() {
   const [input, setInput] = useState({
@@ -35,7 +36,7 @@ function Login() {
     };
 
     axios
-      .post("http://localhost:3000/api/v1/user/login", data, {
+      .post(`${API}/api/v1/user/login`, data, {
         withCredentials: true
       })
       .then((response) => {

@@ -24,7 +24,7 @@ function MyChats() {
 
   const fetchChats = async () => {
     try {
-      const response = await axios.get(`${API}/api/v1/user/chat`, {
+      const response = await axios.get(`${API}/api/v1/chat`, {
         withCredentials: true
       });
       const { populatedChats, currentUserId } = response.data;

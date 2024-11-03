@@ -15,10 +15,26 @@ dotenv.config();
 const app = express();
 const httpServer = createServer(app);
 
-app.use(cors({
-    origin: 'https://chat-app-git-main-sachin-prajapatis-projects.vercel.app',
+
+const allowedOrigins = [
+    "https://chat-app-sachin-prajapatis-projects.vercel.app",
+    "https://chat-app-git-main-sachin-prajapatis-projects.vercel.app"
+]
+
+const corsOptions = {
+    origin: (origin, callback) => {
+        if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+            // Allow the request if the origin is in the allowedOrigins array or if there is no origin
+            callback(null, true);
+        } else {
+            // Otherwise, reject the request
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true
-}));
+};
+
+app.use(corsOptions);
 app.use(json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true })); // Handle URL-encoded data

@@ -16,7 +16,7 @@ const app = express();
 const httpServer = createServer(app);
 
 app.use(cors({
-    origin: 'https://chat-app-git-main-sachin-prajapatis-projects.vercel.app',
+    origin: 'http://localhost:5173',
     credentials: true
 }));
 app.use(json());
@@ -44,7 +44,7 @@ const io = new Server(httpServer, {
     pingInterval: 25000,             // Keep the ping interval
     pingTimeout: 60000,          // Keep the ping timeout
     cors: {
-        origin: 'https://chat-app-git-main-sachin-prajapatis-projects.vercel.app',
+        origin: 'http://localhost:5173',
         methods: ["GET", "POST"],
         credentials: true,
     }

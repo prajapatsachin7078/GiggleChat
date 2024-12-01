@@ -1,4 +1,10 @@
 import { PaperclipIcon } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger
+} from "@/components/ui/popover";
+import { useRef } from "react";
 
 const ChatInput = ({
   handleSendMessage,
@@ -6,6 +12,11 @@ const ChatInput = ({
   message,
   isTyping
 }) => {
+  const uploadFile = useRef();
+
+  const handleInputTypeSelect = ()=>{
+    uploadFile.current.click();
+  }
   return (
     <div className="p-4 border-t bg-white">
       {isTyping && (
@@ -16,7 +27,26 @@ const ChatInput = ({
         </div>
       )}
       <div className="flex items-center">
-        <PaperclipIcon  className="mr-2 hover:cursor-pointer"/>
+        <Popover>
+          <PopoverTrigger>
+            {" "}
+            <PaperclipIcon className="mr-2 hover:cursor-pointer" />
+          </PopoverTrigger>
+          <PopoverContent className="w-560 translate-x-6">
+            <ul className="py-2">
+              <li
+                onClick={handleInputTypeSelect}
+                className=" hover:cursor-pointer px-2 py-1 hover:shadow-md border-b"
+              >
+                Photos
+              </li>
+              <li onClick ={handleInputTypeSelect} className="hover:cursor-pointer hover:shadow-md border-b px-2 py-1">
+                Documents
+              </li>
+              <input type="file" ref={uploadFile} name="" hidden id="" />
+            </ul>
+          </PopoverContent>
+        </Popover>
 
         <input
           type="text"

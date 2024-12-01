@@ -5,4 +5,4 @@ export function cn(...inputs) {
   return twMerge(clsx(inputs));
 }
 
-export const API = "https://chitchat-j7mk.onrender.com";
+export const API = "http://localhost:3000";

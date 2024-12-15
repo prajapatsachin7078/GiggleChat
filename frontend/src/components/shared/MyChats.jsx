@@ -66,7 +66,7 @@ function MyChats() {
       <div className="flex justify-between">
         <h1 className="text-2xl font-bold mb-4">My Chats</h1>
         <CreateNewGroup>
-          <Button>
+          <Button className="bg-rose-500 hover:bg-rose-600 text-white">
             New Group <PlusIcon />{" "}
           </Button>
         </CreateNewGroup>
@@ -100,11 +100,11 @@ function MyChats() {
                     onClick={() => {
                       setSelectedChat(chat); // Set the selected chat
                     }}
-                    className={`border mb-2 hover:bg-green-300 rounded-lg bg-white shadow hover:shadow-lg transition-shadow duration-200 cursor-pointer `}
+                    className={`border mb-2 hover:bg-teal-100 rounded-lg bg-white shadow hover:shadow-lg transition-shadow duration-200 cursor-pointer `}
                   >
                     <div
                       className={`flex p-2 items-center space-x-4 ${
-                        selectedChat?._id === chat?._id ? "bg-green-300" : ""
+                        selectedChat?._id === chat?._id ? "bg-teal-100" : ""
                       }`}
                     >
                       {chat.isGroupChat ? (

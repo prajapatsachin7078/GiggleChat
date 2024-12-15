@@ -17,7 +17,7 @@ import { HoverCardTrigger } from "@radix-ui/react-hover-card";
 import { API } from "@/lib/utils";
 
 function Header() {
-  const { user, notification,setUser, setNotification, setSelectedChat } =
+  const { user, notification, setUser, setNotification, setSelectedChat } =
     useContext(UserContext);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const navigate = useNavigate();
@@ -27,12 +27,9 @@ function Header() {
 
   const handleLogOut = async () => {
     try {
-      const response = await axios.get(
-        `${API}/api/v1/user/logout`,
-        {
-          withCredentials: true
-        }
-      );
+      const response = await axios.get(`${API}/api/v1/user/logout`, {
+        withCredentials: true
+      });
       toast({
         description: response.data.message
       });
@@ -40,7 +37,7 @@ function Header() {
       setUser(null);
       navigate("/");
     } catch (error) {
-      console.log("Try againt!");
+      console.log("Try again!");
       toast({
         description: "Try Again! Internal Server error."
       });
@@ -48,19 +45,18 @@ function Header() {
   };
 
   return (
-    <nav className="border-b flex justify-between items-center px-4 py-2 bg-white shadow-sm">
+    <nav className="border-b flex justify-between items-center px-4 py-2  shadow-sm">
       <SideDrawer />
-      <h1 className="text-2xl font-semibold">Chat-App</h1>
+      <h1 className="text-2xl font-semibold">
+        <span className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-500 animate-pulse">
+          GiggleChat
+        </span>
+      </h1>
       <div className="flex items-center space-x-4">
         <HoverCard>
           <HoverCardTrigger asChild>
-            <div
-              className="hover:cursor-pointer relative"
-              onMouseOver={(e) => {
-                e.target.append;
-              }}
-            >
-              <BellIcon className="w-6 h-6  text-gray-600" />
+            <div className="hover:cursor-pointer relative">
+              <BellIcon className="w-6 h-6 text-white" />
               {notification.length > 0 && (
                 <Badge className="rounded-full bg-red-500 absolute translate-x-3 -translate-y-4 top-0 right-0">
                   {notification.length}
@@ -117,7 +113,7 @@ function Header() {
 
             {/* Dropdown Menu */}
             {isDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border z-10">
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border z-10 transition-all duration-300 ease-in-out">
                 <div className="flex flex-col p-2">
                   <ProfileModal user={user}>
                     <Button variant="ghost">{user.name}</Button>

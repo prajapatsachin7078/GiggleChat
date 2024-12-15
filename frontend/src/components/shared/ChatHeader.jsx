@@ -4,11 +4,11 @@ import { UpdateGroupModal } from "./UpdateGroupModal";
 import { SelectedUserProfileModal } from "./SelectedUserProfileModal";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import {UserContext} from "@/context/userContext";
+import { UserContext } from "@/context/userContext";
 
 const ChatHeader = ({ selectedChat, user }) => {
+  const { setSelectedChat } = useContext(UserContext);
 
-  const {setSelectedChat} = useContext(UserContext);
   return (
     <div className="flex w-full justify-between px-2 py-1 items-center">
       <ArrowLeftIcon
@@ -18,7 +18,16 @@ const ChatHeader = ({ selectedChat, user }) => {
         }}
       />
       <div className="flex items-center gap-1">
-        <span>
+        <span
+          className="font-semibold text-lg text-gray-800 truncate max-w-[200px]"
+          title={
+            selectedChat?.isGroupChat
+              ? selectedChat.name
+              : selectedChat.participants.filter(
+                  (participant) => participant._id !== user.userId
+                )[0].name
+          }
+        >
           {selectedChat?.isGroupChat
             ? selectedChat.name
             : selectedChat.participants.filter(

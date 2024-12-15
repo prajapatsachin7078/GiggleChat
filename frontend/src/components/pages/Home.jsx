@@ -29,14 +29,19 @@ function Home() {
   }, [features.length,user]);
 
   return (
-    <div className="h-screen bg-gradient-to-b from-blue-500 to-indigo-600 text-white flex flex-col justify-center items-center">
+    <div className="h-screen bg-gradient-to-b from-pink-100 to-rose-50 text-gray-800 flex flex-col justify-center items-center">
       <motion.div
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
         className="text-center space-y-4"
       >
-        <h1 className="text-5xl font-bold mb-4">Welcome to MyChat</h1>
+        <h1 className="text-5xl font-bold mb-4">
+          Welcome to{" "}
+          <span className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-500 via-red-400 to-yellow-300 animate-pulse">
+            GiggleChat
+          </span>
+        </h1>
         <p className="text-2xl">Your Ultimate Messaging Experience</p>
 
         {/* Dynamic Text Rendering for Features */}
@@ -56,11 +61,10 @@ function Home() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 w-full max-w-5xl">
         {/* Feature 1 */}
         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-          <Card className="bg-white text-black shadow-lg h-[200px]">
+          <Card className="bg-white text-gray-800 shadow-md border-2 border-rose-200 h-[200px]">
             <CardHeader className="flex justify-between items-center">
               <h2 className="text-xl font-semibold">Fast Messaging</h2>
-              <MessageSquare className="w-6 h-6 text-blue-500" />{" "}
-              {/* Correct Icon */}
+              <MessageSquare className="w-6 h-6 text-rose-500" />
             </CardHeader>
             <CardContent>
               <p>
@@ -73,10 +77,10 @@ function Home() {
 
         {/* Feature 2 */}
         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-          <Card className="bg-white text-black shadow-lg h-[200px]">
+          <Card className="bg-white text-gray-800 shadow-md border-2 border-rose-200 h-[200px]">
             <CardHeader className="flex justify-between items-center">
               <h2 className="text-xl font-semibold">Secure Chats</h2>
-              <Lock className="w-6 h-6 text-blue-500" /> {/* Correct Icon */}
+              <Lock className="w-6 h-6 text-rose-500" />
             </CardHeader>
             <CardContent>
               <p>
@@ -89,10 +93,10 @@ function Home() {
 
         {/* Feature 3 */}
         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-          <Card className="bg-white text-black shadow-lg h-[200px]">
+          <Card className="bg-white text-gray-800 shadow-md border-2 border-rose-200 h-[200px]">
             <CardHeader className="flex justify-between items-center">
               <h2 className="text-xl font-semibold">Group Chats</h2>
-              <Users className="w-6 h-6 text-blue-500" /> {/* Correct Icon */}
+              <Users className="w-6 h-6 text-rose-500" />
             </CardHeader>
             <CardContent>
               <p>
@@ -116,7 +120,7 @@ function Home() {
               <TooltipTrigger asChild>
                 <Button
                   onClick={() => navigate("/chats")}
-                  className="bg-white text-blue-600 font-semibold"
+                  className="bg-rose-500 hover:bg-rose-600 text-white font-semibold"
                 >
                   Chats
                 </Button>
@@ -132,8 +136,8 @@ function Home() {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
-                    onClick={() => navigate("/signup")}
-                    className="bg-white text-blue-600 font-semibold"
+                    onClick={() => navigate("/verify-email")}
+                    className="bg-rose-500 hover:bg-rose-600 text-white font-semibold"
                   >
                     Sign Up
                   </Button>
@@ -149,7 +153,7 @@ function Home() {
                 <TooltipTrigger asChild>
                   <Button
                     onClick={() => navigate("/login")}
-                    className="bg-white text-blue-600 font-semibold"
+                    className="bg-rose-500 hover:bg-rose-600 text-white font-semibold"
                   >
                     Login
                   </Button>

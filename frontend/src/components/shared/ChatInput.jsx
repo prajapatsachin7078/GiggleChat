@@ -1,4 +1,4 @@
-import { PaperclipIcon } from "lucide-react";
+import { PaperclipIcon, SendHorizonalIcon } from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -62,9 +62,9 @@ const ChatInput = ({
         />
         <button
           onClick={handleSendMessage}
-          className="ml-2 bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700"
+          className="ml-2 bg-blue-600 px-6 py-2 text-white rounded-lg hover:bg-blue-700"
         >
-          Send
+          <SendHorizonalIcon/>
         </button>
       </div>
     </div>

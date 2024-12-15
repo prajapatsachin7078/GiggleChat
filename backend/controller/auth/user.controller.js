@@ -1,7 +1,15 @@
 import { User } from "../../models/user.model.js";
+import { OTP } from "../../models/otp.model.js";
 import bcrypt from 'bcrypt';
 import { z } from 'zod';
 import jwt from 'jsonwebtoken';
+import { transport } from '../../utils/nodemailer.js'
+
+// Function to generate a 6-digit OTP
+const generateOtp = () => {
+    return Math.floor(100000 + Math.random() * 900000).toString();
+};
+// Schema for input validation user registration 
 const userSignUpSchema = z.object({
     name: z.string().min(1, { message: "Name is required." }),
     email: z.string().email({ message: "Invalid email address." }),
@@ -11,11 +19,85 @@ const userSignUpSchema = z.object({
             message: "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character."
         }),
 });
-export const userSignUp = async (req, res) => {
-    // console.log(req.body);
+// Email OTP authentication
+export const userEmailVerification = async (req, res) => {
+    const email = req.body.email;
+    console.log(email);
+    // Generate OTP
+    const otp = generateOtp();
+
+    // Set expiration time (1 minute from now)
+    const expiresAt = new Date(Date.now() + 1 * 60 * 1000);
+
     try {
-        // Validate the request body with Zod
-        const { name, email, password } = userSignUpSchema.parse(req.body);
+
+        await OTP.create({
+            email, otp, expiresAt
+        })
+        const info = await transport.sendMail({
+            from: process.env.SMTP_USER,
+            to: email,
+            subject: 'OTP Verification from MyChat',
+            text: `Please use the following OTP for verification: ${otp}. This OTP is valid for 1 minute.`
+
+        })
+
+        if (!info.messageId) {
+            res.json({
+                success: false,
+                message: "Invalid Email!"
+            })
+            return;
+        }
+
+        res.json({
+            success: true,
+            message: "OTP sent successfully! Please check your email."
+        })
+    } catch (error) {
+        console.log(error);
+        res.json({
+            success: false,
+            message: "Internal Server error!"
+        })
+    }
+}
+
+
+// OTP Verification 
+export const verifyOtp = async (req, res) => {
+    const { email, otp } = req.body;
+    try {
+        const isValidOtp = await OTP.findOne({ email, otp });
+        console.log(isValidOtp);
+        if (!isValidOtp) {
+            res.json({
+                success: false,
+                message: "Invalid OTP"
+            })
+            return;
+        }
+
+        res.json({
+            success: true,
+            message: "OTP Verified. Continue with registration....."
+        })
+
+        await OTP.deleteOne({email,otp});
+
+    } catch (error) {
+        console.log(error);
+        res.json({
+            success: false,
+            message: "Internal Server error!"
+        })
+    }
+}
+export const userSignUp = async (req, res) => {
+    // Validate the request body with Zod
+    const { name, email, password } = userSignUpSchema.parse(req.body);
+
+    try {
         const file = req.file;
         // Check if the user already exists
         const existingUser = await User.findOne({ email });
@@ -80,7 +162,7 @@ export const userLogin = async (req, res) => {
         const userToken = { userId: user._id };
         const token = jwt.sign(userToken, process.env.SECRET_KEY);
         // Set Cookie
-        console.log("Token: ",token)
+        console.log("Token: ", token)
         res.cookie('token', token, {
             secure: true,//use this when the code is in production for https cookie request
             httpOnly: true,
@@ -89,12 +171,14 @@ export const userLogin = async (req, res) => {
             expires: new Date(Date.now() + 3600000 * 24) // 1 hour expiration
         });
 
-        return res.status(200).json({ message: "Sign-in successful.", user: { 
-            email: user.email,
-            avatar: user.avatar,
-            name: user.name,
-            userId: user._id
-        } });
+        return res.status(200).json({
+            message: "Sign-in successful.", user: {
+                email: user.email,
+                avatar: user.avatar,
+                name: user.name,
+                userId: user._id
+            }
+        });
     } catch (error) {
         return res.status(500).json({ message: "Internal server error." });
     }

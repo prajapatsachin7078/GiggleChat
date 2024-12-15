@@ -91,89 +91,115 @@ export function CreateNewGroup({ children }) {
         setParticipants(prevParticipants => prevParticipants.filter(participant => participant.id !== id));
     }
     return (
-        <Dialog open={isDialogOpen} onOpenChange={() => { setIsDialogOpen(!isDialogOpen) }}>
-            <DialogTrigger asChild>
-                {children}
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                    <DialogTitle>Create New Group</DialogTitle>
-                    <DialogDescription>
-                        Create Groups and Have Fun with Friends and Family.
-                    </DialogDescription>
-                </DialogHeader>
-                <div className=" py-4">
-                    <div className=" items-center gap-4 mb-2">
-
-                        <Input id="name" value={name}
-                            placeholder="Group Name"
-                            onChange={(e) => { setName(e.target.value) }}
-                            className="col-span-3" />
+      <Dialog
+        open={isDialogOpen}
+        onOpenChange={() => {
+          setIsDialogOpen(!isDialogOpen);
+        }}
+      >
+        <DialogTrigger asChild>{children}</DialogTrigger>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Create New Group</DialogTitle>
+            <DialogDescription>
+              Create Groups and Have Fun with Friends and Family.
+            </DialogDescription>
+          </DialogHeader>
+          <div className=" py-4">
+            <div className=" items-center gap-4 mb-2">
+              <Input
+                id="name"
+                value={name}
+                placeholder="Group Name"
+                onChange={(e) => {
+                  setName(e.target.value);
+                }}
+                className="col-span-3"
+              />
+            </div>
+            <div className=" items-center">
+              <Input
+                id="search"
+                placeholder="Add users, e.g. Piyush, Sachin.."
+                onChange={handleSearch}
+                value={search}
+                className="col-span-3 mb-2"
+              />
+            </div>
+            {/* Users list */}
+            <div
+              className={`${
+                participants.length > 0 ? "border my-2 px-1 py-2" : ""
+              }`}
+            >
+              {participants.map((participant, index) => (
+                <Badge key={index} className={"p-2 m-1 text-sm hover:bg-black"}>
+                  {participant.name}
+                  <Cross1Icon
+                    className="ml-2 hover:cursor-pointer"
+                    onClick={() => {
+                      handleRemoveParticipant(participant.id);
+                    }}
+                  />
+                </Badge>
+              ))}
+            </div>
+            {/* Search List */}
+            <div>
+              {isLoading ? (
+                <div className="flex flex-col space-y-4">
+                  <div className="flex items-center space-x-4">
+                    <Skeleton className="h-12 w-12 rounded-full" />
+                    <div className="space-y-2">
+                      <Skeleton className="h-4 w-[250px]" />
+                      <Skeleton className="h-4 w-[200px]" />
                     </div>
-                    <div className=" items-center">
-
-                        <Input id="search"
-                            placeholder="Add users, e.g. Piyush, Sachin.."
-                            onChange={handleSearch}
-                            value={search}
-                            className="col-span-3 mb-2"
-                        />
+                  </div>
+                  <div className="flex items-center space-x-4">
+                    <Skeleton className="h-12 w-12 rounded-full" />
+                    <div className="space-y-2">
+                      <Skeleton className="h-4 w-[250px]" />
+                      <Skeleton className="h-4 w-[200px]" />
                     </div>
-                    {/* Users list */}
-                    <div className={`${participants.length > 0 ? 'border my-2 px-1 py-2' : ''}`}>
-                        {
-                            participants.map((participant, index) => (
-                                <Badge key={index} className={'p-2 m-1 text-sm hover:bg-black'}>
-                                    {participant.name}
-                                    <Cross1Icon
-                                        className="ml-2 hover:cursor-pointer"
-                                        onClick={() => { handleRemoveParticipant(participant.id) }}
-                                    />
-                                </Badge>
-                            ))
-                        }
-                    </div>
-                    {/* Search List */}
-                    <div>
-                        {isLoading ?
-                            (<div className="flex flex-col space-y-4">
-                                <div className="flex items-center space-x-4">
-                                    <Skeleton className="h-12 w-12 rounded-full" />
-                                    <div className="space-y-2">
-                                        <Skeleton className="h-4 w-[250px]" />
-                                        <Skeleton className="h-4 w-[200px]" />
-                                    </div>
-                                </div>
-                                <div className="flex items-center space-x-4">
-                                    <Skeleton className="h-12 w-12 rounded-full" />
-                                    <div className="space-y-2">
-                                        <Skeleton className="h-4 w-[250px]" />
-                                        <Skeleton className="h-4 w-[200px]" />
-                                    </div>
-                                </div>
-                            </div>)
-                            : (searchResults.length > 0 && searchResults.slice(0, 4).map((user) => (
-                                <div key={user._id} className="flex items-center  hover:cursor-pointer
-                hover:bg-red-400 justify-between rounded-md px-1 hover:text-white space-x-4 py-2 border-b"
-                                    onClick={() => { handleAddParticipant(user._id, user.name) }}
-                                >
-                                    <div className='flex'>
-                                        <img src={user.avatar.url || '/fallback-avatar.png'} alt={user.name} className="h-12 w-12 rounded-full" />
-                                        <div className='ml-2'>
-                                            <div className="font-semibold">{user.name}</div>
-                                            <div className="text-gray-700">{user.email}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            )))}
-                    </div>
+                  </div>
                 </div>
-                <DialogFooter>
-                    <Button type="submit"
-                        onClick={handleCreateGroup}
-                    >Create</Button>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
-    )
+              ) : (
+                searchResults.length > 0 &&
+                searchResults.slice(0, 4).map((user) => (
+                  <div
+                    key={user._id}
+                    className="flex items-center  hover:cursor-pointer
+                hover:bg-red-400 justify-between rounded-md px-1 hover:text-white space-x-4 py-2 border-b"
+                    onClick={() => {
+                      handleAddParticipant(user._id, user.name);
+                    }}
+                  >
+                    <div className="flex">
+                      <img
+                        src={user.avatar.url || "/fallback-avatar.png"}
+                        alt={user.name}
+                        className="h-12 w-12 rounded-full"
+                      />
+                      <div className="ml-2">
+                        <div className="font-semibold">{user.name}</div>
+                        <div className="text-gray-700">{user.email}</div>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              className="bg-rose-500 hover:bg-rose-600 text-white"
+              type="submit"
+              onClick={handleCreateGroup}
+            >
+              Create
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    );
 }

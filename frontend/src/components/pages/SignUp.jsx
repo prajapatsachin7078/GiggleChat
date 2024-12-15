@@ -9,21 +9,36 @@ import { toast } from "@/hooks/use-toast";
 
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { API } from "@/lib/utils";
+import { ToastAction } from "@radix-ui/react-toast";
 
 function SignUp() {
   const [input, setInput] = useState({
     name: "",
     email: "",
     password: "",
+    confirmPassword:"",
     avatar: ""
   });
   const [isToggled, setIsToggled] = useState(false);
   const [inputType, setInputType] = useState("password");
   const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     setInputType("password");
-    setIsToggled("false");
+    setIsToggled(false);
     e.preventDefault(); // Prevent the default behaviour of the form
+    // Confirm password before registering
+    if(input.password!==input.confirmPassword){
+      // Handle validation error
+      toast({
+        variant: "destructive",
+        title:"Password mismatch!",
+        description: "Password and confirm password should be same!",
+        action: <ToastAction altText="Try again">Try again</ToastAction>
+      });
+      return;
+    }
+    
     const data = {
       name: input.name.trim(),
       email: input.email.trim(),
@@ -97,12 +112,15 @@ function SignUp() {
     setInputType(inputType == "password" ? "text" : "password");
   };
   return (
-    <div className="flex justify-center align-middle items-center h-[100vh]">
-      <Card>
-        <CardHeader className="items-center font-semibold text-2xl">
-          Sign Up
+    <div className="flex justify-center items-center h-[100vh] bg-gradient-to-b from-pink-100 to-rose-50 text-gray-800">
+      <Card className="w-[90%] max-w-md">
+        <CardHeader className="items-center font-semibold text-2xl text-center">
+          Complete your registration for{" "}
+          <span className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-500 via-red-400 to-yellow-300 animate-pulse">
+            GiggleChat
+          </span>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
           <Label htmlFor="name">Name</Label>
           <Input
             type="text"
@@ -111,6 +129,7 @@ function SignUp() {
             placeholder="Enter your name"
             value={input.name}
             onChange={handleInputChange}
+            className="border border-gray-300"
           />
           <Label htmlFor="email">Email</Label>
           <Input
@@ -120,36 +139,64 @@ function SignUp() {
             placeholder="xyz@gmail.com"
             value={input.email}
             onChange={handleInputChange}
+            className="border border-gray-300"
           />
           <Label htmlFor="password">Password</Label>
           <div className="relative">
             <Input
               type={inputType}
-              
               id="password"
               name="password"
               value={input.password}
               onChange={handleInputChange}
+              className="border border-gray-300"
             />
-            <span className="hover:cursor-pointer" onClick={handleTypeChange}>
+            <span
+              className="absolute top-2.5 right-2 hover:cursor-pointer"
+              onClick={handleTypeChange}
+            >
               {isToggled ? (
-                <EyeIcon className="absolute top-2 end-2" />
+                <EyeIcon className="text-gray-500 w-5 h-5" />
               ) : (
-                <EyeOffIcon className="absolute top-2 end-2" />
-              )}    
+                <EyeOffIcon className="text-gray-500 w-5 h-5" />
+              )}
+            </span>
+          </div>
+          <Label htmlFor="confirmPassword">Confirm Password</Label>
+          <div className="relative">
+            <Input
+              type={inputType}
+              id="confirmPassword"
+              name="confirmPassword"
+              value={input.confirmPassword}
+              onChange={handleInputChange}
+              className="border border-gray-300"
+            />
+            <span
+              className="absolute top-2.5 right-2 hover:cursor-pointer"
+              onClick={handleTypeChange}
+            >
+              {isToggled ? (
+                <EyeIcon className="text-gray-500 w-5 h-5" />
+              ) : (
+                <EyeOffIcon className="text-gray-500 w-5 h-5" />
+              )}
             </span>
           </div>
         </CardContent>
         <CardFooter className="flex flex-col space-y-3">
-          <Button type="submit" className="w-full" onClick={handleSubmit}>
-            Submit
+          <Button
+            type="submit"
+            className="w-full bg-rose-500 hover:bg-rose-600 text-white font-semibold"
+            onClick={handleSubmit}
+          >
+            Register
           </Button>
-
           <div>
             <p>
-              If already have an account?{" "}
+              Already have an account?{" "}
               <Link
-                className="text-blue-600 border-b border-blue-600"
+                className="text-rose-500 font-semibold hover:underline"
                 to={"/login"}
               >
                 Sign in

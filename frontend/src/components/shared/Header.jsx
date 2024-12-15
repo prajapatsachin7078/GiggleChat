@@ -56,7 +56,7 @@ function Header() {
         <HoverCard>
           <HoverCardTrigger asChild>
             <div className="hover:cursor-pointer relative">
-              <BellIcon className="w-6 h-6 text-white" />
+              <BellIcon className="w-6 h-6" />
               {notification.length > 0 && (
                 <Badge className="rounded-full bg-red-500 absolute translate-x-3 -translate-y-4 top-0 right-0">
                   {notification.length}

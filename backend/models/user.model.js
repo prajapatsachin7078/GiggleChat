@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const userSchema = new mongoose.Schema({
     name:{
         type: String,
-        required: true,
+        // required: true,
         trim: true
     },
     email: {
@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String, 
         trim: true,
-        required: true
+        // required: true
     },
     avatar: {
         type: {
@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema({
             localPath: String,
         },
         default: {
-            url: `https://via.placeholder.com/200x200.png`,
+            url: `https://github.com/shadcn.png`,
             localPath: "",
         },
     }

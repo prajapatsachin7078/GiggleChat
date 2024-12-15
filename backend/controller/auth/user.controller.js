@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import { z } from 'zod';
 import jwt from 'jsonwebtoken';
 import { transport } from '../../utils/nodemailer.js'
+import { generateRandomPassword } from "../../utils/randomPassword.js"
 
 // Function to generate a 6-digit OTP
 const generateOtp = () => {
@@ -12,7 +13,7 @@ const generateOtp = () => {
 // Schema for input validation user registration 
 const userSignUpSchema = z.object({
     name: z.string().min(1, { message: "Name is required." }),
-    email: z.string().email({ message: "Invalid email address." }),
+    userId: z.string(),
     password: z.string()
         .min(8, { message: "Password must be at least 8 characters long." })
         .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/, {
@@ -37,7 +38,7 @@ export const userEmailVerification = async (req, res) => {
         const info = await transport.sendMail({
             from: process.env.SMTP_USER,
             to: email,
-            subject: 'OTP Verification from MyChat',
+            subject: 'OTP Verification from GiggleChat',
             text: `Please use the following OTP for verification: ${otp}. This OTP is valid for 1 minute.`
 
         })
@@ -69,7 +70,7 @@ export const verifyOtp = async (req, res) => {
     const { email, otp } = req.body;
     try {
         const isValidOtp = await OTP.findOne({ email, otp });
-        console.log(isValidOtp);
+        // console.log(isValidOtp);
         if (!isValidOtp) {
             res.json({
                 success: false,
@@ -77,13 +78,36 @@ export const verifyOtp = async (req, res) => {
             })
             return;
         }
+        const password = generateRandomPassword(8);
+        // Hash the new password
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const name = email.split('@')[0];
+
+        const user = await User.create({ email,name, password: hashedPassword });
+
+        await transport.sendMail({
+            from: process.env.SMTP_USER,
+            to: email,
+            subject: 'Temporary Password for GiggleChat',
+            text: `Here is your temporary password, 
+  Password: ${password}
+  Please update your password for security purpose..!`,
+            html: `
+    <div>
+      <p>Here is your temporary password,</p>
+      <h3>Password: ${password}</h3>
+      <p>Please update your password for security purpose..!</p>
+    </div>
+  `
+        });
 
         res.json({
             success: true,
-            message: "OTP Verified. Continue with registration....."
+            message: "OTP Verified. Continue with registration.....",
+            userId: user._id
         })
 
-        await OTP.deleteOne({email,otp});
+        await OTP.deleteOne({ email, otp });
 
     } catch (error) {
         console.log(error);
@@ -94,39 +118,42 @@ export const verifyOtp = async (req, res) => {
     }
 }
 export const userSignUp = async (req, res) => {
-    // Validate the request body with Zod
-    const { name, email, password } = userSignUpSchema.parse(req.body);
+    // Validate the request body with Zod (only name and password)
+    const { name, userId, password } = userSignUpSchema.parse(req.body);
 
     try {
-        const file = req.file;
-        // Check if the user already exists
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({
-                message: "User already exists! Try with a different email.",
+        // Find the user by userId (they should exist after email verification)
+        const existingUser = await User.findById(userId);
+        // console.log(existingUser);
+        if (!existingUser) {
+            return res.status(404).json({
+                message: "User not found. Please verify your email first."
             });
         }
 
-        // Hash the password
+        // Hash the new password
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Create the new user
-        const newUser = await User.create({
-            name,
-            email,
-            password: hashedPassword,
+        // Update the user with the new name and password
+        existingUser.name = name;
+        existingUser.password = hashedPassword;
+
+        // Save the updated user
+        await existingUser.save();
+
+        // Return success response
+        return res.status(200).json({
+            message: "User Registered successfully.",
+            user: {
+                name: existingUser.name,
+                email: existingUser.email
+            }
         });
 
-        // Handle file upload (avatar)
-
-        // Return success response with the created user
-        return res.status(201).json({
-            message: "User created successfully."
-        });
     } catch (error) {
         if (error instanceof z.ZodError) {
             // If validation error from Zod, send the validation error messages
-            console.error(error.errors)
+            console.error(error.errors);
             return res.status(400).json({
                 message: "Validation failed.",
                 errors: error.errors,  // Zod will give you an array of validation issues
@@ -134,7 +161,7 @@ export const userSignUp = async (req, res) => {
         }
 
         // General error handling
-        console.error("Error during sign-up: ", error.message);
+        console.error("Error during user update: ", error.message);
         return res.status(500).json({
             message: "Internal server error. Please try again later.",
         });
@@ -151,7 +178,7 @@ export const userLogin = async (req, res) => {
         }
 
         // Compare the provided password with the stored hashed password
-        const isPasswordValid = await bcrypt.compare(password, user.password);
+        const isPasswordValid = bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
             return res.status(400).json({ message: "Invalid email or password." });
         }
@@ -162,7 +189,7 @@ export const userLogin = async (req, res) => {
         const userToken = { userId: user._id };
         const token = jwt.sign(userToken, process.env.SECRET_KEY);
         // Set Cookie
-        console.log("Token: ", token)
+        // console.log("Token: ", token)
         res.cookie('token', token, {
             secure: true,//use this when the code is in production for https cookie request
             httpOnly: true,

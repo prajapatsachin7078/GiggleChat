@@ -11,6 +11,7 @@ import { API } from "@/lib/utils";
 
 const ENDPOINT = API;
 var socket;
+let debounceSendMsgReq;
 
 function CurrentChat() {
   const [message, setMessage] = useState("");
@@ -126,7 +127,9 @@ function CurrentChat() {
         content: message
       };
       socket.emit("stop typing", selectedChat._id);
-      try {
+      clearTimeout(debounceSendMsgReq); // Clear previous timer
+      debounceSendMsgReq = setTimeout(async() => {
+         try {
         const response = await axios.post(
           `${API}/api/v1/message`,
           newMessage,
@@ -141,6 +144,8 @@ function CurrentChat() {
         console.error("Error sending message: ", error);
       }
       
+      }, 500);
+     
       setFetchAgain("/");
     }
   };

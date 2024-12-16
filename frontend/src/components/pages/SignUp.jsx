@@ -14,10 +14,8 @@ import { ToastAction } from "@radix-ui/react-toast";
 function SignUp() {
   const [input, setInput] = useState({
     name: "",
-    email: "",
     password: "",
-    confirmPassword:"",
-    avatar: ""
+    confirmPassword: ""
   });
   const [isToggled, setIsToggled] = useState(false);
   const [inputType, setInputType] = useState("password");
@@ -27,21 +25,36 @@ function SignUp() {
     setInputType("password");
     setIsToggled(false);
     e.preventDefault(); // Prevent the default behaviour of the form
+
     // Confirm password before registering
-    if(input.password!==input.confirmPassword){
+    if (input.password !== input.confirmPassword) {
       // Handle validation error
       toast({
         variant: "destructive",
-        title:"Password mismatch!",
-        description: "Password and confirm password should be same!",
+        title: "Password mismatch!",
+        description: "Password and confirm password should be the same!",
         action: <ToastAction altText="Try again">Try again</ToastAction>
       });
       return;
     }
-    
+
+    // Fetch userId from localStorage
+    const userId = localStorage.getItem("userId");
+    localStorage.removeItem('userId');
+    if (!userId) {
+      toast({
+        variant: "destructive",
+        title: "User ID not found!",
+        description: "Please make sure you are logged in.",
+        action: <ToastAction altText="Try again">Try again</ToastAction>
+      });
+      return;
+    }
+
+
     const data = {
+      userId,
       name: input.name.trim(),
-      email: input.email.trim(),
       password: input.password.trim()
     };
 
@@ -51,7 +64,7 @@ function SignUp() {
       });
 
       // Handle different response statuses here
-      if (response.status === 201) {
+      if (response.status === 200) {
         // Handle success
         toast({
           variant: "success",
@@ -103,14 +116,16 @@ function SignUp() {
 
     setInput((prevInput) => ({
       ...prevInput, // Spread the previous input state
-      [name]: value // Update only the changed field (name, email, or password)
+      [name]: value // Update only the changed field (name or password)
     }));
   };
+
   // Password Hide/Show handler
   const handleTypeChange = () => {
     setIsToggled(!isToggled);
-    setInputType(inputType == "password" ? "text" : "password");
+    setInputType(inputType === "password" ? "text" : "password");
   };
+
   return (
     <div className="flex justify-center items-center h-[100vh] bg-gradient-to-b from-pink-100 to-rose-50 text-gray-800">
       <Card className="w-[90%] max-w-md">
@@ -128,16 +143,6 @@ function SignUp() {
             name="name"
             placeholder="Enter your name"
             value={input.name}
-            onChange={handleInputChange}
-            className="border border-gray-300"
-          />
-          <Label htmlFor="email">Email</Label>
-          <Input
-            type="email"
-            id="email"
-            name="email"
-            placeholder="xyz@gmail.com"
-            value={input.email}
             onChange={handleInputChange}
             className="border border-gray-300"
           />

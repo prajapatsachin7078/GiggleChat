@@ -101,6 +101,7 @@ function VerifyUserEmail() {
           title: "Success",
           description: "OTP verified successfully."
         });
+        localStorage.setItem('userId',response.data.userId);
       } else {
         toast({
           variant: "destructive",

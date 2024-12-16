@@ -5,18 +5,27 @@ import {
   PopoverTrigger
 } from "@/components/ui/popover";
 import { useRef } from "react";
+import EmojiPicker, { Emoji } from "emoji-picker-react";
+import { FaceIcon } from "@radix-ui/react-icons";
 
 const ChatInput = ({
   handleSendMessage,
   handleInputChange,
   message,
+  handleUpdateMessage,
   isTyping
 }) => {
   const uploadFile = useRef();
 
-  const handleInputTypeSelect = ()=>{
-    uploadFile.current.click();
-  }
+  // const handleInputTypeSelect = () => {
+  //   uploadFile.current.click();
+  // };
+  const handleEmojiClick = (e) => {
+    // console.log(e.emoji);
+    // console.log(message);
+    const newMessage = message + e.emoji;
+    handleUpdateMessage(newMessage);
+  };
   return (
     <div className="p-4 border-t bg-white">
       {isTyping && (
@@ -30,21 +39,23 @@ const ChatInput = ({
         <Popover>
           <PopoverTrigger>
             {" "}
-            <PaperclipIcon className="mr-2 hover:cursor-pointer" />
+            {/* <PaperclipIcon className="mr-2 hover:cursor-pointer" /> */}
+            <FaceIcon className="size-8 text-blue-500 mr-4" />
           </PopoverTrigger>
           <PopoverContent className="w-560 translate-x-6">
-            <ul className="py-2">
-              <li
-                onClick={handleInputTypeSelect}
-                className=" hover:cursor-pointer px-2 py-1 hover:shadow-md border-b"
-              >
-                Photos
-              </li>
-              <li onClick ={handleInputTypeSelect} className="hover:cursor-pointer hover:shadow-md border-b px-2 py-1">
-                Documents
-              </li>
-              <input type="file" ref={uploadFile} name="" hidden id="" />
-            </ul>
+            <EmojiPicker onEmojiClick={handleEmojiClick} />
+            {/* // <ul className="py-2">
+            //   <li
+            //     onClick={handleInputTypeSelect}
+            //     className=" hover:cursor-pointer px-2 py-1 hover:shadow-md border-b"
+            //   >
+            //     Photos
+            //   </li>
+            //   <li onClick ={handleInputTypeSelect} className="hover:cursor-pointer hover:shadow-md border-b px-2 py-1">
+            //     Documents
+            //   </li>
+            //   <input type="file" ref={uploadFile} name="" hidden id="" />
+            // </ul> */}
           </PopoverContent>
         </Popover>
 
@@ -64,7 +75,7 @@ const ChatInput = ({
           onClick={handleSendMessage}
           className="ml-2 bg-blue-600 px-6 py-2 text-white rounded-lg hover:bg-blue-700"
         >
-          <SendHorizonalIcon/>
+          <SendHorizonalIcon />
         </button>
       </div>
     </div>

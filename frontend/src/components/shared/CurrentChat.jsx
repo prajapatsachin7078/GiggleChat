@@ -176,6 +176,7 @@ function CurrentChat() {
         handleSendMessage={handleSendMessage}
         message={message}
         handleInputChange={handleInputChange}
+        handleUpdateMessage = {setMessage}
         isTyping={isTyping}
       />
     </div>

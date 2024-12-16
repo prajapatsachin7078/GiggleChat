@@ -11,6 +11,7 @@ import { API } from "@/lib/utils";
 
 const ENDPOINT = API;
 var socket;
+let debounceSendMsgReq;
 
 function CurrentChat() {
   const [message, setMessage] = useState("");
@@ -126,21 +127,24 @@ function CurrentChat() {
         content: message
       };
       socket.emit("stop typing", selectedChat._id);
-      try {
-        const response = await axios.post(
-          `${API}/api/v1/message`,
-          newMessage,
-          {
-            withCredentials: true
-          }
-        );
-        setMessage("");
-        socket.emit("new message", response.data);
-        setMessages((prevMsg) => [...prevMsg, response.data]);
-      } catch (error) {
-        console.error("Error sending message: ", error);
-      }
-      
+      clearTimeout(debounceSendMsgReq); // Clear any previous timeout
+      debounceSendMsgReq = setTimeout(async () => {
+        try {
+          const response = await axios.post(
+            `${API}/api/v1/message`,
+            newMessage,
+            {
+              withCredentials: true
+            }
+          );
+          setMessage("");
+          socket.emit("new message", response.data);
+          setMessages((prevMsg) => [...prevMsg, response.data]);
+        } catch (error) {
+          console.error("Error sending message: ", error);
+        }
+      }, 500);
+
       setFetchAgain("/");
     }
   };

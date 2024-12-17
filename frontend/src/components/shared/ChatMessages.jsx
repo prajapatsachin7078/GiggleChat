@@ -57,8 +57,8 @@ const ChatMessages = ({ messages, user, isLoading }) => {
                         : "bg-blue-100 text-blue-900" // Outgoing message style
                     }`}
                   >
-                    {/* Sender's Name (Top-Left for incoming messages) */}
-                    {msg.sender._id !== user.userId && (
+                    {/* Sender's Name only if it's a group chat */}
+                    {msg.sender._id !== user.userId && msg.chat.isGroupChat && (
                       <div className="text-xs italic text-gray-500 mb-1">
                         ~ {msg.sender.name}
                       </div>
@@ -67,7 +67,7 @@ const ChatMessages = ({ messages, user, isLoading }) => {
                     {/* Message Content */}
                     <div className="text-sm">{msg.content}</div>
 
-                    {/* Timestamp (Bottom-Right) */}
+                    {/* Timestamp  */}
                     <div className="text-xs italic text-gray-500 mt-1 text-right">
                       {formatTimestamp(msg.createdAt)}
                     </div>

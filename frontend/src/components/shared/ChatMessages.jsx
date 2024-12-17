@@ -57,8 +57,8 @@ const ChatMessages = ({ messages, user, isLoading }) => {
                         : "bg-blue-100 text-blue-900" // Outgoing message style
                     }`}
                   >
-                    {/* Sender's Name  */}
-                    {msg.sender._id !== user.userId && (
+                    {/* Sender's Name  only if it's a group chat */}
+                    {msg.sender._id !== user.userId && msg.chat.isGroupChat && (
                       <div className="text-xs italic text-gray-500 mb-1">
                         ~ {msg.sender.name}
                       </div>

@@ -86,13 +86,13 @@ function SideDrawer() {
               <DrawerTrigger asChild>
                 <Button
                   variant="outline"
-                  className="flex bg-rose-500 hover:bg-rose-600 text-white items-center space-x-2"
+                  className="flex bg-rose-500 hover:bg-rose-600 text-white items-center space-x-2 mr-2"
                   onClick={() => setIsDrawerOpen(true)} // Open drawer
                 >
                   <span className="flex items-center">
                     <SearchIcon className="h-4 w-4" />
                   </span>
-                  <span>Search User</span>
+                  <span className="max-lg:hidden">New Chat</span>
                 </Button>
               </DrawerTrigger>
             </TooltipTrigger>

@@ -30,7 +30,7 @@ const ChatMessages = ({ messages, user, isLoading }) => {
           ref={messageContainerRef}
         >
           <div className="flex flex-col space-y-2">
-            {console.log(messages)}
+            {/* {console.log(messages)} */}
             {messages.length ? (
               messages.map((msg, index) => (
                 <div

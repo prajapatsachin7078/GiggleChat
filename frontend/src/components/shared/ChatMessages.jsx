@@ -1,14 +1,7 @@
 import React, { useEffect, useRef } from "react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger
-} from "@radix-ui/react-tooltip";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import CurrentChatShimmer from "./CurrentChatShimmer";
 import { formatTimestamp } from "../../lib/utils";
-import {formatTimestamp} from '../../lib/utils';
 
 const ChatMessages = ({ messages, user, isLoading }) => {
   const messageContainerRef = useRef(null);
@@ -60,8 +53,7 @@ const ChatMessages = ({ messages, user, isLoading }) => {
                     }`}
                   >
                     {/* Sender's Name  only if it's a group chat */}
-                    {/* Sender's Name only if it's a group chat */}
-
+                   
                     {msg.sender._id !== user.userId && msg.chat.isGroupChat && (
                       <div className="text-xs italic text-gray-500 mb-1">
                         ~ {msg.sender.name}

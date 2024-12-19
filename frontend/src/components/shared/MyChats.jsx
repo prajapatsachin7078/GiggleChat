@@ -8,7 +8,6 @@ import { CreateNewGroup } from "./CreateNewGroup";
 
 const API = import.meta.env.VITE_BACKEND_URI;
 
-
 function MyChats() {
   const [currentUserId, setcurrentUserId] = useState();
   const [loading, setLoading] = useState(true);
@@ -64,15 +63,16 @@ function MyChats() {
   }, [search, chats]);
 
   return (
-    <div className="mx-auto w-full p-4 ">
-      <div className="flex justify-between">
-        <h1 className="text-2xl font-bold mb-4">My Chats</h1>
+    <div className="mx-auto w-full p-4">
+      <div className="flex justify-between mb-4">
+        <h1 className="text-2xl font-bold">My Chats</h1>
         <CreateNewGroup>
           <Button className="bg-rose-500 hover:bg-rose-600 text-white">
-            New Group <PlusIcon />{" "}
+            New Group <PlusIcon />
           </Button>
         </CreateNewGroup>
       </div>
+
       <div className="mb-4">
         <input
           type="text"
@@ -82,16 +82,18 @@ function MyChats() {
           className="w-full border border-gray-300 p-2 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-blue-500"
         />
       </div>
-      <div>
+
+      <div className="h-[72vh] overflow-y-auto">
+        {/* Added scrollable container */}
         {loading ? (
           Array.from({ length: 8 }).map((_, index) => (
             <div key={index} className="flex items-center justify-around mb-2">
               <Skeleton className="h-14 w-14 rounded-full" />
-              <Skeleton className="h-14 w-[85%]  rounded" />
+              <Skeleton className="h-14 w-[85%] rounded" />
             </div>
           ))
         ) : (
-          <div className="overflow-y-auto h-[90vh]">
+          <div className="h-full">
             {filteredChats.length === 0 ? (
               <p className="text-gray-500">No chats found.</p>
             ) : (
@@ -102,7 +104,7 @@ function MyChats() {
                     onClick={() => {
                       setSelectedChat(chat); // Set the selected chat
                     }}
-                    className={`border mb-2 hover:bg-teal-100 rounded-lg bg-white shadow hover:shadow-lg transition-shadow duration-200 cursor-pointer `}
+                    className={`border mb-2 hover:bg-teal-100 rounded-lg bg-white shadow hover:shadow-lg transition-shadow duration-200 cursor-pointer`}
                   >
                     <div
                       className={`flex p-2 items-center space-x-4 ${

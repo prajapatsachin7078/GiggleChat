@@ -73,7 +73,7 @@ const ChatInput = ({
         />
         <button
           onClick={handleSendMessage}
-          className="ml-2 bg-blue-600 px-6 py-2 text-white rounded-lg hover:bg-blue-700"
+          className="ml-2 py-2 text-blue-600 rounded-lg"
         >
           <SendHorizonalIcon />
         </button>

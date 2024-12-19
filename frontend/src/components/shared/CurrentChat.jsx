@@ -128,7 +128,6 @@ function CurrentChat() {
         content: message
       };
       socket.emit("stop typing", selectedChat._id);
-<<<<<<< HEAD
       clearTimeout(debounceSendMsgReq); // Clear previous timer
       debounceSendMsgReq = setTimeout(async() => {
          try {
@@ -148,7 +147,6 @@ function CurrentChat() {
       
       }, 500);
      
-=======
       clearTimeout(debounceSendMsgReq); // Clear any previous timeout
       debounceSendMsgReq = setTimeout(async () => {
         try {
@@ -167,7 +165,6 @@ function CurrentChat() {
         }
       }, 500);
 
->>>>>>> test
       setFetchAgain("/");
     }
   };

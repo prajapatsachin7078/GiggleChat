@@ -7,7 +7,8 @@ import ChatHeader from "./ChatHeader";
 import ChatMessages from "./ChatMessages";
 import ChatInput from "./ChatInput";
 import { UserContext } from "@/context/userContext";
-import { API } from "@/lib/utils";
+
+const API = import.meta.env.VITE_BACKEND_URI;
 
 const ENDPOINT = API;
 var socket;
@@ -127,6 +128,7 @@ function CurrentChat() {
         content: message
       };
       socket.emit("stop typing", selectedChat._id);
+<<<<<<< HEAD
       clearTimeout(debounceSendMsgReq); // Clear previous timer
       debounceSendMsgReq = setTimeout(async() => {
          try {
@@ -146,6 +148,26 @@ function CurrentChat() {
       
       }, 500);
      
+=======
+      clearTimeout(debounceSendMsgReq); // Clear any previous timeout
+      debounceSendMsgReq = setTimeout(async () => {
+        try {
+          const response = await axios.post(
+            `${API}/api/v1/message`,
+            newMessage,
+            {
+              withCredentials: true
+            }
+          );
+          setMessage("");
+          socket.emit("new message", response.data);
+          setMessages((prevMsg) => [...prevMsg, response.data]);
+        } catch (error) {
+          console.error("Error sending message: ", error);
+        }
+      }, 500);
+
+>>>>>>> test
       setFetchAgain("/");
     }
   };

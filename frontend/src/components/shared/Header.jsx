@@ -14,7 +14,9 @@ import { Skeleton } from "../ui/skeleton";
 import { Badge } from "../ui/badge";
 import { HoverCard, HoverCardContent } from "../ui/hover-card";
 import { HoverCardTrigger } from "@radix-ui/react-hover-card";
-import { API } from "@/lib/utils";
+
+const API = import.meta.env.VITE_BACKEND_URI;
+
 
 function Header() {
   const { user, notification, setUser, setNotification, setSelectedChat } =

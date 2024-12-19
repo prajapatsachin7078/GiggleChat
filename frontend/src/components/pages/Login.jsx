@@ -9,7 +9,9 @@ import { toast } from "@/hooks/use-toast";
 import { ToastAction } from "@radix-ui/react-toast";
 import { UserContext } from "@/context/userContext";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
-import { API } from "@/lib/utils";
+
+
+const API = import.meta.env.VITE_BACKEND_URI;
 
 function Login() {
   const [input, setInput] = useState({

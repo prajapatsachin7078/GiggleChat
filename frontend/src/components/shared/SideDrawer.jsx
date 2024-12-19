@@ -19,8 +19,8 @@ import {UserContext} from "@/context/userContext";
 import { toast } from "@/hooks/use-toast";
 import { ToastAction } from "@radix-ui/react-toast";
 import { useNavigate } from "react-router-dom";
-import { API } from "@/lib/utils";
 
+const API = import.meta.env.VITE_BACKEND_URI;
 
 function SideDrawer() {
     const navigate = useNavigate();
@@ -86,13 +86,13 @@ function SideDrawer() {
               <DrawerTrigger asChild>
                 <Button
                   variant="outline"
-                  className="flex bg-rose-500 hover:bg-rose-600 text-white items-center space-x-2"
+                  className="flex bg-rose-500 hover:bg-rose-600 text-white items-center space-x-2 mr-2"
                   onClick={() => setIsDrawerOpen(true)} // Open drawer
                 >
                   <span className="flex items-center">
                     <SearchIcon className="h-4 w-4" />
                   </span>
-                  <span>Search User</span>
+                  <span className="max-md:hidden">New Chat</span>
                 </Button>
               </DrawerTrigger>
             </TooltipTrigger>

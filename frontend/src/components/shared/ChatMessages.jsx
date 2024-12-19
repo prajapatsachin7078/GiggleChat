@@ -7,7 +7,11 @@ import {
 } from "@radix-ui/react-tooltip";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import CurrentChatShimmer from "./CurrentChatShimmer";
+<<<<<<< HEAD
 import { formatTimestamp } from "../../lib/utils";
+=======
+import {formatTimestamp} from '../../lib/utils';
+>>>>>>> test
 const ChatMessages = ({ messages, user, isLoading }) => {
   const messageContainerRef = useRef(null);
   const scrollToBottom = () => {
@@ -57,7 +61,11 @@ const ChatMessages = ({ messages, user, isLoading }) => {
                         : "bg-blue-100 text-blue-900" // Outgoing message style
                     }`}
                   >
+<<<<<<< HEAD
                     {/* Sender's Name  only if it's a group chat */}
+=======
+                    {/* Sender's Name only if it's a group chat */}
+>>>>>>> test
                     {msg.sender._id !== user.userId && msg.chat.isGroupChat && (
                       <div className="text-xs italic text-gray-500 mb-1">
                         ~ {msg.sender.name}

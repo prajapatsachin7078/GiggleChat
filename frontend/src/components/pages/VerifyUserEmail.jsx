@@ -5,8 +5,10 @@ import { Button } from "../ui/button";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 import { ToastAction } from "@radix-ui/react-toast";
-import { API } from "@/lib/utils";
+
 import { Card, CardHeader, CardContent, CardFooter } from "../ui/card"; // assuming you have a card component
+
+const API = import.meta.env.VITE_BACKEND_URI;
 
 function VerifyUserEmail() {
   const [email, setEmail] = useState("");

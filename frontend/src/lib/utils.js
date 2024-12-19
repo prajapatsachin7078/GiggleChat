@@ -5,7 +5,6 @@ import { format } from "date-fns";
 export function cn(...inputs) {
   return twMerge(clsx(inputs));
 }
-import { format } from "date-fns";
 
 export const formatTimestamp = (createdAt) => {
   const date = new Date(createdAt);

@@ -23,31 +23,25 @@ function Header() {
     useContext(UserContext);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const navigate = useNavigate();
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
-  };
+
+  const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 
   const handleLogOut = async () => {
     try {
       const response = await axios.get(`${API}/api/v1/user/logout`, {
         withCredentials: true
       });
-      toast({
-        description: response.data.message
-      });
+      toast({ description: response.data.message });
       localStorage.removeItem("userInfo");
       setUser(null);
       navigate("/");
     } catch (error) {
-      console.log("Try again!");
-      toast({
-        description: "Try Again! Internal Server error."
-      });
+      toast({ description: "Try Again! Internal Server error." });
     }
   };
 
   return (
-    <nav className="border-b flex justify-between items-center px-4 py-2  shadow-sm">
+    <nav className="border-b flex justify-between items-center px-4 py-2 shadow-sm sticky top-0 bg-white z-50">
       <SideDrawer />
       <h1 className="text-2xl font-semibold">
         <span className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-500 animate-pulse">
@@ -69,23 +63,21 @@ function Header() {
           <HoverCardContent className="w-60 mr-10">
             <ul className="space-y-1">
               {notification.length > 0 ? (
-                notification.map((notification) => (
+                notification.map((notif) => (
                   <li
-                    key={notification._id}
+                    key={notif._id}
                     className="space-y-1 hover:cursor-pointer hover:shadow-md p-2"
                     onClick={() => {
-                      setSelectedChat(notification.chat);
-                      setNotification((prevNotification) =>
-                        prevNotification.filter(
-                          (notif) => notif._id !== notification._id
-                        )
+                      setSelectedChat(notif.chat);
+                      setNotification((prev) =>
+                        prev.filter((n) => n._id !== notif._id)
                       );
                     }}
                   >
                     Message from{" "}
-                    {notification.chat.isGroupChat
-                      ? notification.chat.name
-                      : notification.sender.name}
+                    {notif.chat.isGroupChat
+                      ? notif.chat.name
+                      : notif.sender.name}
                   </li>
                 ))
               ) : (
@@ -94,10 +86,8 @@ function Header() {
             </ul>
           </HoverCardContent>
         </HoverCard>
-
         {user ? (
           <div className="relative">
-            {/* Avatar Button */}
             <div
               onClick={toggleDropdown}
               className="cursor-pointer flex items-center space-x-2"
@@ -107,15 +97,11 @@ function Header() {
                   src={user?.avatar?.url || "/fallback-avatar.png"}
                   alt="User Avatar"
                 />
-                <AvatarFallback>
-                  {user?.name ? user.name.charAt(0) : "?"}
-                </AvatarFallback>
+                <AvatarFallback>{user?.name?.charAt(0) || "?"}</AvatarFallback>
               </Avatar>
             </div>
-
-            {/* Dropdown Menu */}
             {isDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border z-10 transition-all duration-300 ease-in-out">
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border z-10">
                 <div className="flex flex-col p-2">
                   <ProfileModal user={user}>
                     <Button variant="ghost">{user.name}</Button>

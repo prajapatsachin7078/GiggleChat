@@ -8,8 +8,10 @@ import axios from "axios";
 import { toast } from "@/hooks/use-toast";
 
 import { EyeIcon, EyeOffIcon } from "lucide-react";
-import { API } from "@/lib/utils";
+
 import { ToastAction } from "@radix-ui/react-toast";
+
+const API = import.meta.env.VITE_BACKEND_URI;
 
 function SignUp() {
   const [input, setInput] = useState({

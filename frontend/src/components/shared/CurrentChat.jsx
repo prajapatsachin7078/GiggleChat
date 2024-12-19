@@ -7,7 +7,8 @@ import ChatHeader from "./ChatHeader";
 import ChatMessages from "./ChatMessages";
 import ChatInput from "./ChatInput";
 import { UserContext } from "@/context/userContext";
-import { API } from "@/lib/utils";
+
+const API = import.meta.env.VITE_BACKEND_URI;
 
 const ENDPOINT = API;
 var socket;

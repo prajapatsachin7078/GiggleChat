@@ -19,8 +19,8 @@ import {UserContext} from "@/context/userContext";
 import { toast } from "@/hooks/use-toast";
 import { ToastAction } from "@radix-ui/react-toast";
 import { useNavigate } from "react-router-dom";
-import { API } from "@/lib/utils";
 
+const API = import.meta.env.VITE_BACKEND_URI;
 
 function SideDrawer() {
     const navigate = useNavigate();
@@ -92,7 +92,7 @@ function SideDrawer() {
                   <span className="flex items-center">
                     <SearchIcon className="h-4 w-4" />
                   </span>
-                  <span className="max-lg:hidden">New Chat</span>
+                  <span className="max-md:hidden">New Chat</span>
                 </Button>
               </DrawerTrigger>
             </TooltipTrigger>

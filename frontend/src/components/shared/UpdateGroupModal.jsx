@@ -16,7 +16,9 @@ import { Badge } from "../ui/badge";
 import { Cross1Icon } from "@radix-ui/react-icons";
 import { toast } from "@/hooks/use-toast";
 import {UserContext} from "@/context/userContext";
-import { API } from "@/lib/utils";
+
+const API = import.meta.env.VITE_BACKEND_URI;
+
 
 export function UpdateGroupModal({ children }) {
     const [participants, setParticipants] = useState([]);

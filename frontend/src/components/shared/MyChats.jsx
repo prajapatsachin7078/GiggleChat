@@ -5,7 +5,9 @@ import { UserContext } from "@/context/userContext";
 import { PlusIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import { CreateNewGroup } from "./CreateNewGroup";
-import { API } from "@/lib/utils";
+
+const API = import.meta.env.VITE_BACKEND_URI;
+
 
 function MyChats() {
   const [currentUserId, setcurrentUserId] = useState();

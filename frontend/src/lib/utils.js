@@ -22,5 +22,3 @@ export const formatTimestamp = (createdAt) => {
     ? `Yesterday, ${format(date, "hh:mm a")}`
     : format(date, "MMM dd, hh:mm a");
 };
-
-export const API = "http://localhost:3000";
